@@ -1,16 +1,16 @@
 class Map {
   Block[][] blocks;
-  int cols, rows;
-  int BWidth, BHeight;
-  String[] lines;
   
-  Map(String filename) {
-    lines = loadStrings(filename);
-    cols = lines[0].length();
-    rows = lines.length;
-    BWidth = width / cols;
-    BHeight = height / rows;
+  Map() {
     blocks = new Block[rows][cols];
+  }
+  
+  void display() {
+    for(int irow = 0; irow < rows; irow+=1) {
+      for(int icol = 0; icol < cols; icol += 1) {
+        m.blocks[irow][icol].display();
+      }
+    }
   }
   
   void ReadMap() {

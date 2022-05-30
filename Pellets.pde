@@ -1,14 +1,8 @@
 class Pellets {
   Pellet[] pellets;
-  int cols, rows;
-  int BWidth, BHeight;
-  String[] lines;
   int total;
   
-  Pellets(String filename) {
-    lines = loadStrings(filename);
-    cols = lines[0].length();
-    rows = lines.length;
+  Pellets() {
     total = 0;
     BWidth = width / cols;
     BHeight = height / rows;
