@@ -17,5 +17,6 @@ class Ghost {
   }
   
   void move() {
+    
   }
 }

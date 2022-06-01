@@ -44,7 +44,7 @@ void setup() {
 
   p.display();
   
-  pac = new PacMan(PacSpawnRow, PacSpawnCol, 15);
+  pac = new PacMan(PacSpawnRow, PacSpawnCol, BWidth);
   pac.display();
   
   purpleSpawnCol = 14;
@@ -70,9 +70,15 @@ void draw() {
   m.display();
   p.display();
   pac.display();
-  pac.keyPressed();
+  //pac.keyPressed();
+  pac.move();
   purpleG.display();
   redG.display();
   lightBlueG.display();
   orangeG.display();
+  pac.inWall(pac.x,pac.y,m.blocks[20][14]);
+}
+
+void keyPressed() {
+  pac.keyPressed(); 
 }
