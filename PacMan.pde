@@ -3,15 +3,15 @@ class PacMan {
   //fill(200, 200, 0);
   //circle(14*BWidth +BWidth/2, 21*BHeight + BHeight/2, 10);
   
-  int x, y, size;
+  int size;
+  PVector pos;
   int row, col;
   int xVel, yVel;
   int nxV, nyV;
   //size just needs to be switched to width and height when we replace the circle with PImage
   
   PacMan(int row, int col, int asize) {
-    x = col*BWidth + BWidth/2;
-    y = row*BHeight + BHeight/2;
+    pos = new PVector(col*BWidth + BWidth/2, row*BHeight + BHeight/2);
     size = asize;
     this.row = row;
     this.col = col;
@@ -23,7 +23,7 @@ class PacMan {
   
   void display() {
     fill(255, 255, 0);
-    circle(x, y, size);
+    circle(pos.x, pos.y, size);
   }
   
   void keyPressed() {
@@ -65,7 +65,7 @@ class PacMan {
   
   void move() {
     if(nxV == 1){
-      if(!inWall(x+nxV,y, m.blocks[row][col+1]) && x == col*BWidth + (BWidth/2) && y == row*BHeight + (BHeight/2) && m.blocks[row][col+1].type != WALL) {
+      if(!inWall(int(pos.x+nxV),int(pos.y), m.blocks[row][col+1]) && !inSpawn(int(pos.x+nxV),int(pos.y), m.blocks[row][col+1]) && pos.x == col*BWidth + (BWidth/2) && pos.y == row*BHeight + (BHeight/2) && m.blocks[row][col+1].type != WALL) {
         xVel = 1;
         yVel = 0;
         nxV = 0;
@@ -73,7 +73,7 @@ class PacMan {
     }
     
     if(nxV == -1){
-      if(!inWall(x+nxV,y, m.blocks[row][col-1]) && x == col*BWidth + (BWidth/2) && y == row*BHeight + (BHeight/2) && m.blocks[row][col-1].type != WALL) {
+      if(!inWall(int(pos.x+nxV),int(pos.y), m.blocks[row][col-1]) && !inSpawn(int(pos.x+nxV),int(pos.y), m.blocks[row][col-1]) && pos.x == col*BWidth + (BWidth/2) && pos.y == row*BHeight + (BHeight/2) && m.blocks[row][col-1].type != WALL) {
         xVel = -1;
         yVel = 0;
         nxV = 0;
@@ -81,28 +81,28 @@ class PacMan {
     }
     
     if(nyV == 1){
-      if(!inWall(x,y+nyV, m.blocks[row+1][col]) && x == col*BWidth + (BWidth/2) && y == row*BHeight + (BHeight/2) && m.blocks[row+1][col].type != WALL) {
+      if(!inWall(int(pos.x),int(pos.y+nyV), m.blocks[row+1][col]) && !inSpawn(int(pos.x),int(pos.y+nyV), m.blocks[row+1][col]) && pos.x == col*BWidth + (BWidth/2) && pos.y == row*BHeight + (BHeight/2) && m.blocks[row+1][col].type != WALL) {
         yVel = 1;
         xVel = 0;
         nyV = 0;
       }
     }
     if(nyV == -1){
-      if(!inWall(x,y+nyV, m.blocks[row-1][col]) && x == col*BWidth + (BWidth/2) && y == row*BHeight + (BHeight/2) && m.blocks[row-1][col].type != WALL) {
+      if(!inWall(int(pos.x),int(pos.y+nyV), m.blocks[row-1][col]) && !inSpawn(int(pos.x),int(pos.y+nyV), m.blocks[row-1][col]) && pos.x == col*BWidth + (BWidth/2) && pos.y == row*BHeight + (BHeight/2) && m.blocks[row-1][col].type != WALL) {
         yVel = -1;
         xVel = 0;
         nyV = 0;
       }
     }
-    if(inWall(x+xVel,y+yVel)) {
+    if(inWall(int(pos.x+xVel),int(pos.y+yVel))) {
       println("true");
       xVel = 0;
       yVel = 0;
     }
-    x += xVel;
-    y += yVel;
-    setPos(findRow(y),findCol(x));
-    println(inWall(x,y,m.blocks[row][col]));
+    pos.x += xVel;
+    pos.y += yVel;
+    setPos(findRow(int(pos.y)),findCol(int(pos.x)));
+    println(inWall(int(pos.x),int(pos.y),m.blocks[row][col]));
   }
   
   int findRow(int y) {
@@ -143,6 +143,22 @@ class PacMan {
             inWall(x,y,m.blocks[row][col-1]) || 
             inWall(x,y,m.blocks[row][col+1]) ||
             inWall(x,y,m.blocks[row+1][col])  
+            );
+  }
+  
+  boolean inSpawn(int x, int y, Block b) {
+   if(b.type == SPAWN) {
+     if(x-(BWidth/2) < b.xpos+BWidth && x+(BWidth/2) > b.xpos && y-(BHeight/2) < b.ypos+BHeight && y+(BHeight/2) > b.ypos)
+       return true;
+    }
+    return false;
+  }
+  
+  boolean inSpawn(int x, int y) {
+    return (inSpawn(x,y,m.blocks[row-1][col]) ||
+            inSpawn(x,y,m.blocks[row][col-1]) || 
+            inSpawn(x,y,m.blocks[row][col+1]) ||
+            inSpawn(x,y,m.blocks[row+1][col])  
             );
   }
 } 

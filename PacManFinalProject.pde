@@ -1,7 +1,15 @@
+//describes blocks
 int EMPTY = 0;
 int WALL = 1;
 int SPAWN = 2;
 int DOOR = 3;
+
+//ghost modes
+int mode;
+int BLUE = 4;
+int SCATTER = 5;
+int CHASE = 6;
+int EATEN = 7;
 
 color blue = color(0,0,255);
 color black = color(0);
@@ -10,7 +18,7 @@ color red = color(255,0,0);
 int diameter = 5;
 
 int PacSpawnCol, PacSpawnRow;
-int purpleSpawnRow, purpleSpawnCol;
+int pinkSpawnRow, pinkSpawnCol;
 int orangeSpawnRow, orangeSpawnCol;
 int redSpawnRow, redSpawnCol;
 int blueSpawnRow, blueSpawnCol;
@@ -22,9 +30,9 @@ String[] lines;
 Map m;
 Pellets p;
 PacMan pac;
-Ghost purpleG, orangeG, redG, lightBlueG; 
+Ghost pinkG, orangeG, redG, lightBlueG; 
 void setup() {
-  size(600,600);
+  size(560,588);
   background(0);
   
   lines = loadStrings("map.txt");
@@ -47,8 +55,8 @@ void setup() {
   pac = new PacMan(PacSpawnRow, PacSpawnCol, BWidth);
   pac.display();
   
-  purpleSpawnCol = 14;
-  purpleSpawnRow = 13;
+  pinkSpawnCol = 14;
+  pinkSpawnRow = 13;
   redSpawnCol = 14;
   redSpawnRow = 12;
   orangeSpawnCol = 15;
@@ -56,14 +64,17 @@ void setup() {
   blueSpawnCol = 13;
   blueSpawnRow = 13;
   
-  purpleG = new Ghost(purpleSpawnRow, purpleSpawnCol, 10, color(230,140,255));
-  purpleG.display();
-  redG = new Ghost(redSpawnRow, redSpawnCol, 10, color(200, 0, 0));
+  pinkG = new PinkGhost(pinkSpawnRow, pinkSpawnCol, BWidth);
+  pinkG.display();
+  //redG = new RedGhost(redSpawnRow, redSpawnCol, BWidth);
+  redG = new RedGhost(11, 10, BWidth);
   redG.display();
-  lightBlueG = new Ghost(blueSpawnRow, blueSpawnCol, 10, color(130,200,255));
+  lightBlueG = new LightBlueGhost(blueSpawnRow, blueSpawnCol, BWidth);
   lightBlueG.display();
-  orangeG = new Ghost(orangeSpawnRow, orangeSpawnCol, 10, color(255,140,0));
+  orangeG = new OrangeGhost(orangeSpawnRow, orangeSpawnCol, BWidth);
   orangeG.display();
+  
+  mode = BLUE;
 }
 
 void draw() {
@@ -72,11 +83,16 @@ void draw() {
   pac.display();
   //pac.keyPressed();
   pac.move();
-  purpleG.display();
+  pinkG.display();
   redG.display();
   lightBlueG.display();
   orangeG.display();
-  pac.inWall(pac.x,pac.y,m.blocks[20][14]);
+  pac.inWall(int(pac.pos.x),int(pac.pos.y),m.blocks[20][14]);
+  
+  if (mode == BLUE) {
+    redG.blueMove();
+    redG.display();
+  }
 }
 
 void keyPressed() {
