@@ -66,8 +66,8 @@ void setup() {
   
   pinkG = new PinkGhost(pinkSpawnRow, pinkSpawnCol, BWidth);
   pinkG.display();
-  //redG = new RedGhost(redSpawnRow, redSpawnCol, BWidth);
-  redG = new RedGhost(11, 10, BWidth);
+  redG = new RedGhost(redSpawnRow, redSpawnCol, BWidth);
+
   redG.display();
   lightBlueG = new LightBlueGhost(blueSpawnRow, blueSpawnCol, BWidth);
   lightBlueG.display();

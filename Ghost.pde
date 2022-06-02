@@ -59,13 +59,14 @@ class Ghost {
   
   void blueMove() {
     Block nextBlock = m.blocks[(findRow(int(pos.y + vel.y)))][findCol(int(pos.x+vel.x))];
-    if ((findRow(int(pos.y + vel.y)) == row && findCol(int(pos.x+vel.x)) == col) || (pos.y != nextBlock.ypos + BHeight/2 && pos.x != nextBlock.xpos + BWidth/2)) {
-      move();
-    }
+    circle(pos.x+vel.x, pos.y + vel.y, 20);
+    //if ((findRow(int(pos.y + vel.y)) == row && findCol(int(pos.x+vel.x)) == col) || (pos.y != nextBlock.ypos + BHeight/2 && pos.x != nextBlock.xpos + BWidth/2)) {
+    //  move();
+    //}
     //ghost moves randomly but can't move back or into walls
     //vel.mult(-1); //turns 180 degrees
     //ghost has four options of movement: up, down, left, right - but the option that's == vel.mult(-1) isn't allowed
-    else{
+    if (nextBlock.type == WALL) {
       nextVel.x = int(random(3)) - 1;
       nextVel.y = int(random(3)) - 1;
       while((nextVel.x == 0 && nextVel.y == 0) || (nextVel.x != 0 && nextVel.y != 0)) {
@@ -77,9 +78,9 @@ class Ghost {
           nextVel.y = int(random(3))-1;
         }
       }
-      println(nextVel);
-      println(vel + "!");
-      println(checkNextMove(nextVel));
+      move();
+    }
+    else {
       move();
     }
     
