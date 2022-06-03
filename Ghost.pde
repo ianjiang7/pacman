@@ -12,7 +12,7 @@ class Ghost {
   int row, col;
   color c;
   int size;
-  
+  boolean inSpawn;
   //size just needs to be switched to width and height when we replace the circle with PImage
   //ghosts cannot stop moving or reverse direction
   //all ghosts have a target for scatter mode
@@ -30,10 +30,11 @@ class Ghost {
     scatterTarget = new PVector(0,0);
     c = ac;
     size = asize;
+    inSpawn = true;
   }
 
   boolean inWall(int x, int y, Block b) {
-     if(b.type == WALL) {
+     if(b.type == WALL || b.type == SPAWN) {
        if(x-(BWidth/2) < b.xpos+BWidth && x+(BWidth/2) > b.xpos && y-(BHeight/2) < b.ypos+BHeight && y+(BHeight/2) > b.ypos)
          return true;
       }
@@ -52,10 +53,35 @@ class Ghost {
             );
   }
   
+  void spawnMove() {
+    if((inWall(int(pos.x),int(pos.y),m.blocks[row+1][col]) || m.blocks[row][col].type == SPAWN) && !inNext()) {
+     if(m.blocks[row-1][col].type != WALL ) {
+        vel.x = 0;
+        vel.y = -1;
+     }
+     //else{
+     //  vel.x = -1;
+     //  vel.y = 0;
+     //}
+     prevVel = vel;
+     prevPos = pos;
+     pos.add(vel);
+     setPos(findRow(int(pos.y)), findCol(int(pos.x)));
+     println(m.blocks[row][col].type);
+     println(vel);
+     println(findRow(int(nextPos.y)),findCol(int(nextPos.x)));
+   }
+   else{
+     inSpawn = false;
+   }
+  }
+  
   void move() {
     //if(!inWall(int(pos.x+nextVel.x),int(pos.y+nextVel.y), m.blocks[int(row+nextVel.y)][int(col+nextVel.x)]) && nextVel.x!=-vel.x && nextVel.y!=-vel.y) {
       //vel = nextVel;
    // }
+
+     //println(inWall(
     if (checkNextMove(vel)) {
       prevVel = vel;
       prevPos = pos;
@@ -64,6 +90,7 @@ class Ghost {
     }
     setPos(findRow(int(pos.y)), findCol(int(pos.x)));
   }
+  
   
   void display() {
     fill(c);
@@ -96,22 +123,22 @@ class Ghost {
     while(!b) {
       int n = int(random(4));
       if(n == 0){
-        if(m.blocks[row-1][col].type != WALL && vel.y != 1) {
+        if(m.blocks[row-1][col].type != WALL && vel.y != 1 && m.blocks[row-1][col].type != SPAWN) {
           return new PVector(0,-1);
         }
       }
       if(n == 1){
-        if(m.blocks[row+1][col].type != WALL && vel.y != -1) {
+        if(m.blocks[row+1][col].type != WALL && vel.y != -1 && m.blocks[row+1][col].type != SPAWN) {
           return new PVector(0,1);
         }
       }
       if(n == 2){
-        if(m.blocks[row][col-1].type != WALL && vel.x != 1) {
+        if(m.blocks[row][col-1].type != WALL && vel.x != 1 && m.blocks[row][col-1].type != SPAWN) {
           return new PVector(-1,0);
         }
       }
       if(n == 3){
-        if(m.blocks[row][col+1].type != WALL && vel.x != -1) {
+        if(m.blocks[row][col+1].type != WALL && vel.x != -1 && m.blocks[row][col+1].type != SPAWN) {
           return new PVector(1,0);
         }
       }
@@ -215,6 +242,7 @@ class Ghost {
       nextPos.x += vel.x * BWidth;
       nextPos.y += vel.y * BHeight;
       move();
+      
     }
   }
 }

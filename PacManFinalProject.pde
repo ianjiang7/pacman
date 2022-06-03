@@ -27,6 +27,7 @@ int cols, rows;
 int BWidth, BHeight;
 String[] lines;
 
+
 Map m;
 Pellets p;
 PacMan pac;
@@ -103,8 +104,13 @@ void draw() {
     //redG.display();
     //pinkG.scatterMove();
     //pinkG.display();
-    lightBlueG.scatterMove();
-    lightBlueG.display();
+    if(orangeG.inSpawn){
+    orangeG.spawnMove();
+    }
+    else{
+      orangeG.scatterMove();
+    }
+    orangeG.display();
     //orangeG.scatterMove();
     //orangeG.display();
   }
