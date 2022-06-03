@@ -1,8 +1,10 @@
 class Ghost {
   PVector pos;
+  PVector prevVel;
   PVector prevPos;
+  PVector nextPos;
   PVector vel;
-  PVector nextVel;
+  //PVector nextVel;
   //vel.x/nextVel.x and vel.y/nextVel.y can be -1, 0, or 1
   int row, col;
   color c;
@@ -17,9 +19,11 @@ class Ghost {
     row = arow;
     col = acol;
     pos = new PVector(col*BWidth + BWidth/2, row*BHeight + BHeight/2);
-    prevPos = new PVector(0, 0);
-    vel = new PVector(-1,0); //up and to the left?
-    nextVel = vel;
+    prevVel = new PVector(0, 0);
+    prevPos = new PVector(0,0);
+    nextPos = new PVector(col*BWidth + BWidth/2, row*BHeight + BHeight/2 - BHeight);
+    vel = new PVector(0,-1); //up and to the left?
+    //nextVel = vel;
     c = ac;
     size = asize;
   }
@@ -36,7 +40,11 @@ class Ghost {
     return (inWall(x,y,m.blocks[row-1][col]) ||
             inWall(x,y,m.blocks[row][col-1]) || 
             inWall(x,y,m.blocks[row][col+1]) ||
-            inWall(x,y,m.blocks[row+1][col])  
+            inWall(x,y,m.blocks[row+1][col]) ||
+            inWall(x,y,m.blocks[row-1][col-1]) ||
+            inWall(x,y,m.blocks[row-1][col+1]) ||
+            inWall(x,y,m.blocks[row+1][col-1]) ||
+            inWall(x,y,m.blocks[row+1][col+1])
             );
   }
   
@@ -44,10 +52,11 @@ class Ghost {
     //if(!inWall(int(pos.x+nextVel.x),int(pos.y+nextVel.y), m.blocks[int(row+nextVel.y)][int(col+nextVel.x)]) && nextVel.x!=-vel.x && nextVel.y!=-vel.y) {
       //vel = nextVel;
    // }
-    if (checkNextMove(nextVel)) {
+    if (checkNextMove(vel)) {
+      prevVel = vel;
       prevPos = pos;
-      pos.add(nextVel);
-      vel = nextVel;
+      pos.add(vel);
+      //vel = nextVel;
     }
     setPos(findRow(int(pos.y)), findCol(int(pos.x)));
   }
@@ -58,34 +67,52 @@ class Ghost {
   }
   
   void blueMove() {
-    Block nextBlock = m.blocks[(findRow(int(pos.y + vel.y)))][findCol(int(pos.x+vel.x))];
-    circle(pos.x+vel.x, pos.y + vel.y, 20);
-    //if ((findRow(int(pos.y + vel.y)) == row && findCol(int(pos.x+vel.x)) == col) || (pos.y != nextBlock.ypos + BHeight/2 && pos.x != nextBlock.xpos + BWidth/2)) {
-    //  move();
-    //}
-    //ghost moves randomly but can't move back or into walls
-    //vel.mult(-1); //turns 180 degrees
-    //ghost has four options of movement: up, down, left, right - but the option that's == vel.mult(-1) isn't allowed
-    if (nextBlock.type == WALL) {
-      nextVel.x = int(random(3)) - 1;
-      nextVel.y = int(random(3)) - 1;
-      while((nextVel.x == 0 && nextVel.y == 0) || (nextVel.x != 0 && nextVel.y != 0)) {
-        nextVel.x = int(random(3)) - 1;
-        if (nextVel.x != 0) {
-          nextVel.y = 0;
-        }
-        if (nextVel.x == 0) {
-          nextVel.y = int(random(3))-1;
+    if(!inNext()) {
+      move(); 
+    }
+    else{
+      println("0:" + vel);
+      vel = getRandomVel();
+      while(PVector.add(pos,vel) == prevPos)
+        vel = getRandomVel();
+      nextPos.x += vel.x * BWidth;
+      nextPos.y += vel.y * BHeight;
+      move();
+      println("1:" + vel);
+      
+    }
+  }
+  
+  boolean inNext() {
+    return pos.x == nextPos.x && pos.y == nextPos.y;
+  }
+  
+  PVector getRandomVel() {
+    boolean b = false;
+    while(!b) {
+      int n = int(random(4));
+      if(n == 0){
+        if(m.blocks[row-1][col].type != WALL && vel.y != 1) {
+          return new PVector(0,-1);
         }
       }
-      move();
+      if(n == 1){
+        if(m.blocks[row+1][col].type != WALL && vel.y != -1) {
+          return new PVector(0,1);
+        }
+      }
+      if(n == 2){
+        if(m.blocks[row][col-1].type != WALL && vel.x != 1) {
+          return new PVector(-1,0);
+        }
+      }
+      if(n == 3){
+        if(m.blocks[row][col+1].type != WALL && vel.x != -1) {
+          return new PVector(1,0);
+        }
+      }
     }
-    else {
-      move();
-    }
-    
-    
-    
+    return new PVector(0,0);
   }
   
   int findRow(int y) {

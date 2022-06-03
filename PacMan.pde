@@ -102,7 +102,6 @@ class PacMan {
     pos.x += xVel;
     pos.y += yVel;
     setPos(findRow(int(pos.y)),findCol(int(pos.x)));
-    println(inWall(int(pos.x),int(pos.y),m.blocks[row][col]));
   }
   
   int findRow(int y) {

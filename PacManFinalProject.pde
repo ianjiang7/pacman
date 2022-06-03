@@ -87,7 +87,6 @@ void draw() {
   redG.display();
   lightBlueG.display();
   orangeG.display();
-  pac.inWall(int(pac.pos.x),int(pac.pos.y),m.blocks[20][14]);
   
   if (mode == BLUE) {
     redG.blueMove();
