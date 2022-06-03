@@ -74,7 +74,7 @@ void setup() {
   orangeG = new OrangeGhost(orangeSpawnRow, orangeSpawnCol, BWidth);
   orangeG.display();
   
-  mode = BLUE;
+  mode = SCATTER;
 }
 
 void draw() {
@@ -91,6 +91,22 @@ void draw() {
   if (mode == BLUE) {
     redG.blueMove();
     redG.display();
+    //orangeG.blueMove();
+    //orangeG.display();
+    //lightBlueG.blueMove();
+    //lightBlueG.display();
+    //pinkG.blueMove();
+    //pinkG.display();
+  }
+  if (mode == SCATTER) {
+    //redG.scatterMove();
+    //redG.display();
+    //pinkG.scatterMove();
+    //pinkG.display();
+    lightBlueG.scatterMove();
+    lightBlueG.display();
+    //orangeG.scatterMove();
+    //orangeG.display();
   }
 }
 

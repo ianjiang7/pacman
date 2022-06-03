@@ -1,9 +1,12 @@
+float bigNum = 200000; //used to initialize dist0, dist1, and dist2 in scatterMove
+
 class Ghost {
   PVector pos;
   PVector prevVel;
   PVector prevPos;
-  PVector nextPos;
+  PVector nextPos;//coordinates of the center of the next box
   PVector vel;
+  PVector scatterTarget;
   //PVector nextVel;
   //vel.x/nextVel.x and vel.y/nextVel.y can be -1, 0, or 1
   int row, col;
@@ -24,6 +27,7 @@ class Ghost {
     nextPos = new PVector(col*BWidth + BWidth/2, row*BHeight + BHeight/2 - BHeight);
     vel = new PVector(0,-1); //up and to the left?
     //nextVel = vel;
+    scatterTarget = new PVector(0,0);
     c = ac;
     size = asize;
   }
@@ -149,5 +153,68 @@ class Ghost {
   }
   
   void eatenMove() {
+  }
+  
+  void scatterMove() {
+    PVector[] validMoves = new PVector[3];
+    if(!inNext()) {
+      move(); 
+    }
+    else {
+      PVector oldVel = vel.copy();
+      PVector testVel = new PVector(0,1);
+      int checked = 0;
+      if (PVector.mult(oldVel, -1).y!=testVel.y && checkNextMove(testVel)) {
+        validMoves[checked] = testVel.copy();
+        checked++;
+      }
+      testVel = new PVector(-1, 0);
+      if (PVector.mult(oldVel, -1).x!=testVel.x && checkNextMove(testVel)) {
+        validMoves[checked] = testVel.copy();
+        checked++;
+      }
+      testVel = new PVector(0, -1);
+      if (PVector.mult(oldVel, -1).y!=testVel.y && checkNextMove(testVel)) {
+        validMoves[checked] = testVel.copy();
+        checked++;
+      }
+      testVel = new PVector(1, 0);
+      if (PVector.mult(oldVel, -1).x!=testVel.x && checkNextMove(testVel)) {
+        validMoves[checked] = testVel.copy();
+        checked++;
+      }
+      float dist0 = bigNum, dist1 = bigNum, dist2 = bigNum;
+      if (validMoves[0] != null) {
+        dist0 = PVector.dist(PVector.add(pos, validMoves[0]), scatterTarget);
+        if (validMoves[1] != null) {
+          dist1 = PVector.dist(PVector.add(pos, validMoves[1]), scatterTarget);
+          if (validMoves[2] != null) {
+            dist2 = PVector.dist(PVector.add(pos, validMoves[2]), scatterTarget);
+          }
+        }
+      }
+      int leastIndex = 0; //index with smallest distance
+      float min = min(dist0, dist1, dist2);
+      if (dist2 == min) leastIndex = 2;
+      if (dist1 == min) leastIndex = 1;
+      if (dist0 == min) leastIndex = 0;
+      //if (dist1 < dist0) {
+      //  leastIndex = 1;
+      //  if (dist2<dist1) {
+      //    leastIndex = 2;
+      //  }
+      //}
+      //if (dist2 < dist0) {
+      //  leastIndex = 2;
+      //}
+      vel = validMoves[leastIndex].copy();
+      println(validMoves[0], validMoves[1], validMoves[2]);
+      println(dist0, dist1, dist2);
+      println("o" + oldVel, "n" + vel);
+      println("______");
+      nextPos.x += vel.x * BWidth;
+      nextPos.y += vel.y * BHeight;
+      move();
+    }
   }
 }

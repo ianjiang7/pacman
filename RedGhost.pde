@@ -3,5 +3,6 @@ class RedGhost extends Ghost {
   //chase: target is Pac-Man
   RedGhost(int row, int col, int asize) {
     super(row, col, asize,color(200, 0, 0));
+    scatterTarget = new PVector(600, 0);
   }
 }
