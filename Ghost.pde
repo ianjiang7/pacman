@@ -54,25 +54,37 @@ class Ghost {
   }
   
   void spawnMove() {
-    if((inWall(int(pos.x),int(pos.y),m.blocks[row+1][col]) || m.blocks[row][col].type == SPAWN) && !inNext()) {
-     if(m.blocks[row-1][col].type != WALL ) {
-        vel.x = 0;
-        vel.y = -1;
-     }
-     //else{
-     //  vel.x = -1;
-     //  vel.y = 0;
-     //}
-     prevVel = vel;
-     prevPos = pos;
-     pos.add(vel);
-     setPos(findRow(int(pos.y)), findCol(int(pos.x)));
-     println(m.blocks[row][col].type);
-     println(vel);
-     println(findRow(int(nextPos.y)),findCol(int(nextPos.x)));
+    vel.x = 0;
+    vel.y = -1;
+   // if((inWall(int(pos.x),int(pos.y),m.blocks[row+1][col]) || m.blocks[row][col].type == SPAWN) && !inNext()) {
+   //   //if(m.blocks[row-1][col].type != WALL ) {
+   //   //  vel.x = 0;
+   //   //  vel.y = -1;
+   //   //}
+   //   prevVel = vel;
+   //   prevPos = pos;
+   //   pos.add(vel);
+   //   setPos(findRow(int(pos.y)), findCol(int(pos.x)));
+   //   println("_____");
+   //   println(m.blocks[row][col].type);
+   //   //println(vel);
+   //   println(findRow(int(nextPos.y)),findCol(int(nextPos.x)));
+   //}
+   //else if(inNext() && m.blocks[row][col].type == SPAWN)  {
+   //  nextPos.y -= BHeight;
+   //  vel.y = -1;
+   //}
+   //else{
+   //  inSpawn = false;
+   //}
+   if(m.blocks[row-1][col].type != WALL || !(pos.x == findCol(int(pos.x)) * BWidth + BWidth/2 && pos.y == findRow(int(pos.y)) * BHeight + BHeight/2)) {
+      prevVel = vel;
+      prevPos = pos;
+      pos.add(vel);
+      setPos(findRow(int(pos.y)), findCol(int(pos.x)));
    }
    else{
-     inSpawn = false;
+     inSpawn = false; 
    }
   }
   

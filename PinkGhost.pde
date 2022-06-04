@@ -4,5 +4,6 @@ class PinkGhost extends Ghost {
   PinkGhost(int row, int col, int asize) {
     super(row, col, asize,color(230,140,255));
     scatterTarget = new PVector(0, 0);
+    nextPos.y = row*BHeight + BHeight/2 - 2 * BHeight;
   }
 }  

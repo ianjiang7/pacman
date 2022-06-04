@@ -31,7 +31,8 @@ String[] lines;
 Map m;
 Pellets p;
 PacMan pac;
-Ghost pinkG, orangeG, redG, lightBlueG; 
+Ghost pinkG, orangeG, redG, lightBlueG;
+Ghost[] ghosts;
 void setup() {
   size(560,588);
   background(0);
@@ -74,7 +75,11 @@ void setup() {
   lightBlueG.display();
   orangeG = new OrangeGhost(orangeSpawnRow, orangeSpawnCol, BWidth);
   orangeG.display();
-  
+  ghosts = new Ghost[4];
+  ghosts[0] = pinkG;
+  ghosts[1] = redG;
+  ghosts[2] = orangeG;
+  ghosts[3] = lightBlueG;
   mode = SCATTER;
 }
 
@@ -89,30 +94,44 @@ void draw() {
   lightBlueG.display();
   orangeG.display();
   
-  if (mode == BLUE) {
-    redG.blueMove();
-    redG.display();
-    //orangeG.blueMove();
-    //orangeG.display();
-    //lightBlueG.blueMove();
-    //lightBlueG.display();
-    //pinkG.blueMove();
-    //pinkG.display();
-  }
-  if (mode == SCATTER) {
-    //redG.scatterMove();
-    //redG.display();
-    //pinkG.scatterMove();
-    //pinkG.display();
-    if(orangeG.inSpawn){
-    orangeG.spawnMove();
+  //if (mode == BLUE) {
+  //  redG.blueMove();
+  //  redG.display();
+  //  //orangeG.blueMove();
+  //  //orangeG.display();
+  //  //lightBlueG.blueMove();
+  //  //lightBlueG.display();
+  //  //pinkG.blueMove();
+  //  //pinkG.display();
+  //}
+  //if (mode == SCATTER) {
+  //  //redG.scatterMove();
+  //  //redG.display();
+  //  //pinkG.scatterMove();
+  //  //pinkG.display();
+  //  if(orangeG.inSpawn){
+  //  orangeG.spawnMove();
+  //  }
+  //  else{
+  //    orangeG.scatterMove();
+  //  }
+  //  orangeG.display();
+  //  //orangeG.scatterMove();
+  //  //orangeG.display();
+  //}
+  for(int i = 0;i < 4;i++) {
+    //if(i ==2) continue;
+    if(ghosts[i].inSpawn) {
+      ghosts[i].spawnMove();
     }
     else{
-      orangeG.scatterMove();
+      if(mode == BLUE) {
+        ghosts[i].blueMove(); 
+      }
+      if(mode == SCATTER) {
+        ghosts[i].scatterMove(); 
+      }
     }
-    orangeG.display();
-    //orangeG.scatterMove();
-    //orangeG.display();
   }
 }
 
