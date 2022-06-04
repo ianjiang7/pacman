@@ -8,6 +8,11 @@ class LightBlueGhost extends Ghost {
   }
   
   void setChaseTarget() {
-    
+    PVector vec;
+    PVector pacVel = new PVector(pac.xVel, pac.yVel);
+    vec = PVector.add(pac.pos.copy(), PVector.mult(pacVel, 2*BWidth));
+    //vec = PVector.add(vec, redG.pos);
+    chaseTarget = vec.copy();
+    chaseTarget.setMag(2*PVector.dist(vec, redG.pos));
   }
 }
