@@ -6,4 +6,8 @@ class LightBlueGhost extends Ghost {
     nextPos.y -= BHeight;
     scatterTarget = new PVector(600, 600);
   }
+  
+  void setChaseTarget() {
+    
+  }
 }

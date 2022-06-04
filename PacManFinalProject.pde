@@ -80,7 +80,7 @@ void setup() {
   ghosts[1] = redG;
   ghosts[2] = orangeG;
   ghosts[3] = lightBlueG;
-  mode = SCATTER;
+  mode = CHASE;
 }
 
 void draw() {
@@ -130,6 +130,9 @@ void draw() {
       }
       if(mode == SCATTER) {
         ghosts[i].scatterMove(); 
+      }
+      if (mode == CHASE) {
+        ghosts[i].chaseMove();
       }
     }
   }

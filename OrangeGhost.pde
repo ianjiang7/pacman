@@ -3,6 +3,7 @@ class OrangeGhost extends Ghost {
   //chase: when 8 or more units from Pac-Man, target is Pac-Man
   //chase: if less than 8, target is scatter target
   int target;
+  float distToPac;
   OrangeGhost(int row, int col, int asize) {
     super(row, col, asize,color(255,140,0));
     scatterTarget = new PVector(0, 600);
@@ -24,5 +25,16 @@ class OrangeGhost extends Ghost {
     else{
       super.spawnMove();
     }  
+  }
+  
+  void setChaseTarget() {
+    println("o");
+    distToPac = PVector.dist(pac.pos, pos);
+    if (distToPac >= 8*BWidth) {
+      chaseTarget = pac.pos.copy();
+    }
+    else {
+      chaseTarget = scatterTarget.copy();
+    }
   }
 }

@@ -5,4 +5,8 @@ class RedGhost extends Ghost {
     super(row, col, asize,color(200, 0, 0));
     scatterTarget = new PVector(600, 0);
   }
+  
+  void setChaseTarget() {
+    chaseTarget = pac.pos.copy();
+  }
 }

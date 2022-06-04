@@ -6,4 +6,9 @@ class PinkGhost extends Ghost {
     scatterTarget = new PVector(0, 0);
     nextPos.y = row*BHeight + BHeight/2 - 2 * BHeight;
   }
+  
+  void setChaseTarget() {
+    PVector pacVel = new PVector(pac.xVel, pac.yVel);
+    chaseTarget = PVector.add(pac.pos.copy(), PVector.mult(pacVel, 4*BWidth));
+  }
 }  
