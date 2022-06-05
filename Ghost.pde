@@ -8,12 +8,15 @@ class Ghost {
   PVector vel;
   PVector scatterTarget;
   PVector chaseTarget;
+  PVector eatenTarget; //where the ghosts go when they've been eaten
   //PVector nextVel;
   //vel.x/nextVel.x and vel.y/nextVel.y can be -1, 0, or 1
   int row, col;
   color c;
   int size;
   boolean inSpawn;
+  boolean blue; //need a blue boolean because individual ghosts can be not blue if they respawn during blue mode
+  boolean eaten;
   //size just needs to be switched to width and height when we replace the circle with PImage
   //ghosts cannot stop moving or reverse direction
   //all ghosts have a target for scatter mode
@@ -30,13 +33,16 @@ class Ghost {
     //nextVel = vel;
     scatterTarget = new PVector(0, 0);
     setChaseTarget();
+    eatenTarget = new PVector(redSpawnCol*BWidth + BWidth/2, redSpawnRow*BHeight + BHeight/2);
     c = ac;
     size = asize;
     inSpawn = true;
+    blue = false; //changes to true when pac man eats power pellet
+    eaten = false; //changes to true when mode == BLUE && ghost intersects w pac
   }
 
   boolean inWall(int x, int y, Block b) {
-     if(b.type == WALL || b.type == SPAWN) {
+     if(b.type == WALL || (b.type == SPAWN && !eaten)) {//need the eaten because ghosts that are trying to respawn need to get back into the spawn zone
        if(x-(BWidth/2) < b.xpos+BWidth && x+(BWidth/2) > b.xpos && y-(BHeight/2) < b.ypos+BHeight && y+(BHeight/2) > b.ypos)
          return true;
       }
@@ -193,7 +199,69 @@ class Ghost {
     else return !inWall(int(pos.x+next.x), int(pos.y+next.y)); 
   }
   
+  //void setEaten() { //eaten also needs to be set to false once it reaches eatenTarget, also once it reaches eatenTarget, inSpawn needs to be set to true
+  //  if (blue) {
+  //    if (intersectWPac()) { //might reset eaten to false if ghost stops intersecting with pac man like when pac moves away
+  //      eaten = true;
+  //    }
+  //    else {
+  //      eaten = false;
+  //    }
+  //  }
+  //  else {
+  //    eaten = false;
+  //  }
+  //} //need for later (maybe?)
+  
   void eatenMove() {
+    PVector[] validMoves = new PVector[3];
+    if (!inNext()) {
+      move();
+    }
+    else {
+      PVector oldVel = vel.copy();
+      PVector testVel = new PVector(0,1);
+      int checked = 0;
+      if (PVector.mult(oldVel, -1).y!=testVel.y && checkNextMove(testVel)) {
+        validMoves[checked] = testVel.copy();
+        checked++;
+      }
+      testVel = new PVector(-1, 0);
+      if (PVector.mult(oldVel, -1).x!=testVel.x && checkNextMove(testVel)) {
+        validMoves[checked] = testVel.copy();
+        checked++;
+      }
+      testVel = new PVector(0, -1);
+      if (PVector.mult(oldVel, -1).y!=testVel.y && checkNextMove(testVel)) {
+        validMoves[checked] = testVel.copy();
+        checked++;
+      }
+      testVel = new PVector(1, 0);
+      if (PVector.mult(oldVel, -1).x!=testVel.x && checkNextMove(testVel)) {
+        validMoves[checked] = testVel.copy();
+        checked++;
+      }
+      float dist0 = bigNum, dist1 = bigNum, dist2 = bigNum;
+      if (validMoves[0] != null) {
+        dist0 = PVector.dist(PVector.add(pos, validMoves[0]), eatenTarget);
+        if (validMoves[1] != null) {
+          dist1 = PVector.dist(PVector.add(pos, validMoves[1]), eatenTarget);
+          if (validMoves[2] != null) {
+            dist2 = PVector.dist(PVector.add(pos, validMoves[2]), eatenTarget);
+          }
+        }
+      }
+      int leastIndex = 0; //index with smallest distance
+      float min = min(dist0, dist1, dist2);
+      if (dist2 == min) leastIndex = 2;
+      if (dist1 == min) leastIndex = 1;
+      if (dist0 == min) leastIndex = 0;
+      vel = validMoves[leastIndex].copy();
+      nextPos.x += vel.x * BWidth;
+      nextPos.y += vel.y * BHeight;
+      move();
+     
+    }
   }
   
   void scatterMove() {

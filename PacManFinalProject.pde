@@ -126,7 +126,15 @@ void draw() {
     }
     else{
       if(mode == BLUE) {
-        ghosts[i].blueMove(); 
+        if (ghosts[i].blue) { //when ghost is blue
+          ghosts[i].blueMove(); 
+        }
+        else if (ghosts[i].eaten) { //when ghost has been eaten
+          ghosts[i].blueMove();
+        }
+        else { //when ghost has been respawned after being eaten
+          ghosts[i].scatterMove();
+        }
       }
       if(mode == SCATTER) {
         ghosts[i].scatterMove(); 
