@@ -50,15 +50,21 @@ class Ghost {
   }
   
   boolean inWall(int x, int y) {
-    return (inWall(x,y,m.blocks[row-1][col]) ||
-            inWall(x,y,m.blocks[row][col-1]) || 
-            inWall(x,y,m.blocks[row][col+1]) ||
-            inWall(x,y,m.blocks[row+1][col]) ||
-            inWall(x,y,m.blocks[row-1][col-1]) ||
-            inWall(x,y,m.blocks[row-1][col+1]) ||
-            inWall(x,y,m.blocks[row+1][col-1]) ||
-            inWall(x,y,m.blocks[row+1][col+1])
-            );
+    if (col > 0 && col < 27) {
+      return (inWall(x,y,m.blocks[row-1][col]) ||
+              inWall(x,y,m.blocks[row][col-1]) || 
+              inWall(x,y,m.blocks[row][col+1]) ||
+              inWall(x,y,m.blocks[row+1][col]) ||
+              inWall(x,y,m.blocks[row-1][col-1]) ||
+              inWall(x,y,m.blocks[row-1][col+1]) ||
+              inWall(x,y,m.blocks[row+1][col-1]) ||
+              inWall(x,y,m.blocks[row+1][col+1])
+              );
+    }
+    else if (col == 27 || col == 0) {
+      return (inWall(x,y,m.blocks[row-1][col]) || inWall(x,y,m.blocks[row+1][col]));
+    } 
+    return false;
   }
   
   void spawnMove() {
@@ -79,6 +85,8 @@ class Ghost {
     if (checkNextMove(vel)) {
       prevVel = vel;
       prevPos = pos;
+      if(pos.x > width) pos.x = 0;
+      if(pos.x < 0) pos.x = width;
       pos.add(vel);
     }
     setPos(findRow(int(pos.y)), findCol(int(pos.x)));

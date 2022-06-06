@@ -65,7 +65,7 @@ class PacMan {
   
   void move() {
     if(nxV == 1){
-      if(!inWall(int(pos.x+nxV),int(pos.y), m.blocks[row][col+1]) && !inSpawn(int(pos.x+nxV),int(pos.y), m.blocks[row][col+1]) && pos.x == col*BWidth + (BWidth/2) && pos.y == row*BHeight + (BHeight/2) && m.blocks[row][col+1].type != WALL) {
+      if(col == 27 || (!inWall(int(pos.x+nxV),int(pos.y), m.blocks[row][col+1]) && !inSpawn(int(pos.x+nxV),int(pos.y), m.blocks[row][col+1]) && pos.x == col*BWidth + (BWidth/2) && pos.y == row*BHeight + (BHeight/2) && m.blocks[row][col+1].type != WALL)) {
         xVel = 1;
         yVel = 0;
         nxV = 0;
@@ -73,7 +73,7 @@ class PacMan {
     }
     
     if(nxV == -1){
-      if(!inWall(int(pos.x+nxV),int(pos.y), m.blocks[row][col-1]) && !inSpawn(int(pos.x+nxV),int(pos.y), m.blocks[row][col-1]) && pos.x == col*BWidth + (BWidth/2) && pos.y == row*BHeight + (BHeight/2) && m.blocks[row][col-1].type != WALL) {
+      if(col == 0 || (!inWall(int(pos.x+nxV),int(pos.y), m.blocks[row][col-1]) && !inSpawn(int(pos.x+nxV),int(pos.y), m.blocks[row][col-1]) && pos.x == col*BWidth + (BWidth/2) && pos.y == row*BHeight + (BHeight/2) && m.blocks[row][col-1].type != WALL)) {
         xVel = -1;
         yVel = 0;
         nxV = 0;
@@ -81,14 +81,22 @@ class PacMan {
     }
     
     if(nyV == 1){
-      if(!inWall(int(pos.x),int(pos.y+nyV), m.blocks[row+1][col]) && !inSpawn(int(pos.x),int(pos.y+nyV), m.blocks[row+1][col]) && pos.x == col*BWidth + (BWidth/2) && pos.y == row*BHeight + (BHeight/2) && m.blocks[row+1][col].type != WALL) {
+      if (col ==  0 || col == 27) {
+        yVel = 0;
+        nyV = 0;
+      }
+      else if(!inWall(int(pos.x),int(pos.y+nyV), m.blocks[row+1][col]) && !inSpawn(int(pos.x),int(pos.y+nyV), m.blocks[row+1][col]) && pos.x == col*BWidth + (BWidth/2) && pos.y == row*BHeight + (BHeight/2) && m.blocks[row+1][col].type != WALL) {
         yVel = 1;
         xVel = 0;
         nyV = 0;
       }
     }
     if(nyV == -1){
-      if(!inWall(int(pos.x),int(pos.y+nyV), m.blocks[row-1][col]) && !inSpawn(int(pos.x),int(pos.y+nyV), m.blocks[row-1][col]) && pos.x == col*BWidth + (BWidth/2) && pos.y == row*BHeight + (BHeight/2) && m.blocks[row-1][col].type != WALL) {
+      if (col ==  0 || col == 27) {
+        yVel = 0;
+        nyV = 0;
+      }
+      else if(!inWall(int(pos.x),int(pos.y+nyV), m.blocks[row-1][col]) && !inSpawn(int(pos.x),int(pos.y+nyV), m.blocks[row-1][col]) && pos.x == col*BWidth + (BWidth/2) && pos.y == row*BHeight + (BHeight/2) && m.blocks[row-1][col].type != WALL) {
         yVel = -1;
         xVel = 0;
         nyV = 0;
@@ -98,6 +106,12 @@ class PacMan {
       println("true");
       xVel = 0;
       yVel = 0;
+    }
+    if (pos.x > width) {
+      pos.x -= width;
+    }
+    if (pos.x < 0) {
+      pos.x = width;
     }
     pos.x += xVel;
     pos.y += yVel;
@@ -130,6 +144,7 @@ class PacMan {
   }
   
   boolean inWall(int x, int y, Block b) {
+    
      if(b.type == WALL) {
        if(x-(BWidth/2) < b.xpos+BWidth && x+(BWidth/2) > b.xpos && y-(BHeight/2) < b.ypos+BHeight && y+(BHeight/2) > b.ypos)
          return true;
@@ -138,11 +153,17 @@ class PacMan {
   }
   
   boolean inWall(int x, int y) {
-    return (inWall(x,y,m.blocks[row-1][col]) ||
-            inWall(x,y,m.blocks[row][col-1]) || 
-            inWall(x,y,m.blocks[row][col+1]) ||
-            inWall(x,y,m.blocks[row+1][col])  
-            );
+    if (col > 0 && col < 27) {
+      return (inWall(x,y,m.blocks[row-1][col]) ||
+              inWall(x,y,m.blocks[row][col-1]) || 
+              inWall(x,y,m.blocks[row][col+1]) ||
+              inWall(x,y,m.blocks[row+1][col])  
+              );
+    }
+    else if (col == 27 || col == 0) {
+      return (inWall(x,y,m.blocks[row-1][col]) || inWall(x,y,m.blocks[row+1][col]));
+    }
+    return false;
   }
   
   boolean inSpawn(int x, int y, Block b) {
