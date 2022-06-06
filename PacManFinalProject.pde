@@ -28,6 +28,7 @@ int BWidth, BHeight;
 String[] lines;
 
 
+
 Map m;
 Pellets p;
 PacMan pac;
@@ -49,13 +50,14 @@ void setup() {
   m = new Map();
   m.ReadMap();
   m.display();
+   pac = new PacMan(PacSpawnRow, PacSpawnCol, BWidth);
+  pac.display();
   p = new Pellets();
     p.ReadFile();
 
   p.display();
   
-  pac = new PacMan(PacSpawnRow, PacSpawnCol, BWidth);
-  pac.display();
+ 
   
   pinkSpawnCol = 14;
   pinkSpawnRow = 13;
@@ -80,7 +82,7 @@ void setup() {
   ghosts[1] = redG;
   ghosts[2] = orangeG;
   ghosts[3] = lightBlueG;
-  mode = CHASE;
+  mode = SCATTER;
 }
 
 void draw() {
@@ -94,31 +96,7 @@ void draw() {
   lightBlueG.display();
   orangeG.display();
   
-  //if (mode == BLUE) {
-  //  redG.blueMove();
-  //  redG.display();
-  //  //orangeG.blueMove();
-  //  //orangeG.display();
-  //  //lightBlueG.blueMove();
-  //  //lightBlueG.display();
-  //  //pinkG.blueMove();
-  //  //pinkG.display();
-  //}
-  //if (mode == SCATTER) {
-  //  //redG.scatterMove();
-  //  //redG.display();
-  //  //pinkG.scatterMove();
-  //  //pinkG.display();
-  //  if(orangeG.inSpawn){
-  //  orangeG.spawnMove();
-  //  }
-  //  else{
-  //    orangeG.scatterMove();
-  //  }
-  //  orangeG.display();
-  //  //orangeG.scatterMove();
-  //  //orangeG.display();
-  //}
+ 
   for(int i = 0;i < 4;i++) {
     //if(i ==2) continue;
     if(ghosts[i].inSpawn) {
@@ -128,9 +106,10 @@ void draw() {
       if(mode == BLUE) {
         if (ghosts[i].blue) { //when ghost is blue
           ghosts[i].blueMove(); 
+          println(ghosts[i].eaten);
         }
         else if (ghosts[i].eaten) { //when ghost has been eaten
-          ghosts[i].blueMove();
+          ghosts[i].eatenMove();
         }
         else { //when ghost has been respawned after being eaten
           ghosts[i].scatterMove();

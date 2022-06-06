@@ -64,27 +64,6 @@ class Ghost {
   void spawnMove() {
     vel.x = 0;
     vel.y = -1;
-   // if((inWall(int(pos.x),int(pos.y),m.blocks[row+1][col]) || m.blocks[row][col].type == SPAWN) && !inNext()) {
-   //   //if(m.blocks[row-1][col].type != WALL ) {
-   //   //  vel.x = 0;
-   //   //  vel.y = -1;
-   //   //}
-   //   prevVel = vel;
-   //   prevPos = pos;
-   //   pos.add(vel);
-   //   setPos(findRow(int(pos.y)), findCol(int(pos.x)));
-   //   println("_____");
-   //   println(m.blocks[row][col].type);
-   //   //println(vel);
-   //   println(findRow(int(nextPos.y)),findCol(int(nextPos.x)));
-   //}
-   //else if(inNext() && m.blocks[row][col].type == SPAWN)  {
-   //  nextPos.y -= BHeight;
-   //  vel.y = -1;
-   //}
-   //else{
-   //  inSpawn = false;
-   //}
    if(m.blocks[row-1][col].type != WALL || !(pos.x == findCol(int(pos.x)) * BWidth + BWidth/2 && pos.y == findRow(int(pos.y)) * BHeight + BHeight/2)) {
       prevVel = vel;
       prevPos = pos;
@@ -97,16 +76,10 @@ class Ghost {
   }
   
   void move() {
-    //if(!inWall(int(pos.x+nextVel.x),int(pos.y+nextVel.y), m.blocks[int(row+nextVel.y)][int(col+nextVel.x)]) && nextVel.x!=-vel.x && nextVel.y!=-vel.y) {
-      //vel = nextVel;
-   // }
-
-     //println(inWall(
     if (checkNextMove(vel)) {
       prevVel = vel;
       prevPos = pos;
       pos.add(vel);
-      //vel = nextVel;
     }
     setPos(findRow(int(pos.y)), findCol(int(pos.x)));
   }
@@ -130,8 +103,8 @@ class Ghost {
       nextPos.y += vel.y * BHeight;
       move();
       println("1:" + vel);
-      
     }
+    setEaten();
   }
   
   boolean inNext() {
@@ -199,22 +172,33 @@ class Ghost {
     else return !inWall(int(pos.x+next.x), int(pos.y+next.y)); 
   }
   
-  //void setEaten() { //eaten also needs to be set to false once it reaches eatenTarget, also once it reaches eatenTarget, inSpawn needs to be set to true
-  //  if (blue) {
-  //    if (intersectWPac()) { //might reset eaten to false if ghost stops intersecting with pac man like when pac moves away
-  //      eaten = true;
-  //    }
-  //    else {
-  //      eaten = false;
-  //    }
-  //  }
-  //  else {
-  //    eaten = false;
-  //  }
-  //} //need for later (maybe?)
+  void setEaten() { //eaten also needs to be set to false once it reaches eatenTarget, also once it reaches eatenTarget, inSpawn needs to be set to true
+    if (blue) {
+      if (intersectWPac()) { //might reset eaten to false if ghost stops intersecting with pac man like when pac moves away
+        eaten = true;
+        blue = false;
+      }
+      //else {
+      //  eaten = false;
+      //}
+    }
+    //else {
+    //  eaten = false;
+    //}
+  } //need for later (maybe?)
+  
+  boolean intersectWPac() {
+    println("  " + str(pos.dist(pac.pos) < BWidth));
+    return pos.dist(pac.pos) < BWidth;
+  }
   
   void eatenMove() {
     PVector[] validMoves = new PVector[3];
+    if(pos.dist(eatenTarget) < 1.0) {
+      inSpawn = true;
+      eaten = false;
+      
+    }
     if (!inNext()) {
       move();
     }
@@ -260,7 +244,6 @@ class Ghost {
       nextPos.x += vel.x * BWidth;
       nextPos.y += vel.y * BHeight;
       move();
-     
     }
   }
   
@@ -307,20 +290,7 @@ class Ghost {
       if (dist2 == min) leastIndex = 2;
       if (dist1 == min) leastIndex = 1;
       if (dist0 == min) leastIndex = 0;
-      //if (dist1 < dist0) {
-      //  leastIndex = 1;
-      //  if (dist2<dist1) {
-      //    leastIndex = 2;
-      //  }
-      //}
-      //if (dist2 < dist0) {
-      //  leastIndex = 2;
-      //}
       vel = validMoves[leastIndex].copy();
-      println(validMoves[0], validMoves[1], validMoves[2]);
-      println(dist0, dist1, dist2);
-      println("o" + oldVel, "n" + vel);
-      println("______");
       nextPos.x += vel.x * BWidth;
       nextPos.y += vel.y * BHeight;
       move();
