@@ -382,4 +382,10 @@ class Ghost {
     }
   }
   
+  boolean killPac() {
+    if (!blue && !eaten && dist(pac.pos.x,pac.pos.y, pos.x, pos.y) < BWidth) {
+      return true;
+    }
+    return false;
+  }
 }

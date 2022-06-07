@@ -28,7 +28,8 @@ int BWidth, BHeight;
 String[] lines;
 
 int eatenPellets;
-
+int pacLives;
+int score;
 
 Map m;
 Pellets p;
@@ -36,16 +37,16 @@ PacMan pac;
 Ghost pinkG, orangeG, redG, lightBlueG;
 Ghost[] ghosts;
 void setup() {
-  size(560,588);
+  size(560,608);
   background(0);
-  
+  score = 0;
   eatenPellets = 0;
-  
+  pacLives = 3;
   lines = loadStrings("map.txt");
   cols = lines[0].length();
   rows = lines.length;
-  BWidth = width / cols;
-  BHeight = height / rows;
+  BWidth = 20;
+  BHeight = 20;
   
   PacSpawnCol = 14;
   PacSpawnRow = 21;
@@ -53,7 +54,7 @@ void setup() {
   m = new Map();
   m.ReadMap();
   m.display();
-   pac = new PacMan(PacSpawnRow, PacSpawnCol, BWidth);
+  pac = new PacMan(PacSpawnRow, PacSpawnCol, BWidth);
   pac.display();
   p = new Pellets();
     p.ReadFile();
@@ -86,12 +87,14 @@ void setup() {
   ghosts[2] = orangeG;
   ghosts[3] = lightBlueG;
   mode = CHASE;
+  
+  textAlign(LEFT,TOP);
 }
 
 void draw() {
-  if (eatenPellets == p.total) {
-    println("p");
-    println(eatenPellets);
+  background(0);
+  if (eatenPellets == p.total || pacLives == 0) {
+    println("GAME OVER");
   }
   else {
   m.display();
@@ -129,8 +132,15 @@ void draw() {
       }
     }
     ghosts[i].display();
+    if(ghosts[i].killPac()) {
+      if(pacLives != 0) {
+        pacLives--;
+        pac = new PacMan(PacSpawnRow, PacSpawnCol, BWidth);
+      }
+    }
   }
   }
+  text("SCORE: " + str(score),0,588,float(width),20.0);
 }
 
 void keyPressed() {

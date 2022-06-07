@@ -14,6 +14,7 @@ class Pellet{
     if(inPacMan() && !eaten){
       eaten = true;
       eatenPellets++;
+      score += 100;
     }
     if(!eaten){
       fill(255);
