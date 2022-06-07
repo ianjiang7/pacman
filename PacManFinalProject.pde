@@ -104,17 +104,25 @@ void draw() {
   //pac.keyPressed();
   pac.move();
   
- 
+  //println(ghosts[3].nextPos.x,ghosts[3].nextPos.y, ghosts[3].pos, ghosts[3].vel);
   for(int i = 0;i < 4;i++) {
-    //if(i ==2) continue;
+    //println(ghosts[i].eaten,ghosts[i].blue,ghosts[i].inSpawn);
     if(ghosts[i].inSpawn) {
-      ghosts[i].spawnMove();
+      if(i == 3 && eatenPellets >= 30){
+        ghosts[i].spawnMove();
+      }
+      else if(i == 2 && eatenPellets > p.total/3) {
+        ghosts[i].spawnMove();
+      }
+      else if(i == 0 || i == 1) {
+        ghosts[i].spawnMove(); 
+      }
     }
     else{
       if(mode == BLUE) {
         if (ghosts[i].blue) { //when ghost is blue
           ghosts[i].blueMove(); 
-          println(ghosts[i].eaten);
+          //println(ghosts[i].eaten);
         }
         else if (ghosts[i].eaten) { //when ghost has been eaten
           ghosts[i].eatenMove();

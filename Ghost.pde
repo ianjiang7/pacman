@@ -28,12 +28,12 @@ class Ghost {
     pos = new PVector(col*BWidth + BWidth/2, row*BHeight + BHeight/2);
     prevVel = new PVector(0, 0);
     prevPos = new PVector(0,0);
-    nextPos = new PVector(col*BWidth + BWidth/2, row*BHeight + BHeight/2 - BHeight);
+    nextPos = new PVector(col*BWidth + BWidth/2, row*BHeight + BHeight/2 -  BHeight);
     vel = new PVector(0,-1); //up and to the left?
     //nextVel = vel;
     scatterTarget = new PVector(0, 0);
     setChaseTarget();
-    eatenTarget = new PVector(redSpawnCol*BWidth + BWidth/2, redSpawnRow*BHeight + BHeight/2);
+    eatenTarget = new PVector(redSpawnCol*BWidth + BWidth/2 , redSpawnRow*BHeight + BHeight/2 + BHeight);
     c = ac;
     size = asize;
     inSpawn = true;
@@ -68,16 +68,21 @@ class Ghost {
   }
   
   void spawnMove() {
+    //nextPos.x = redSpawnCol * BWidth + BWidth/2;
+    //nextPos.y = redSpawnRow * BHeight - BHeight + BHeight/2;
     vel.x = 0;
     vel.y = -1;
-   if(m.blocks[row-1][col].type != WALL || !(pos.x == findCol(int(pos.x)) * BWidth + BWidth/2 && pos.y == findRow(int(pos.y)) * BHeight + BHeight/2)) {
+   if(m.blocks[row-1][col].type != WALL || !(pos.x == col * BWidth + BWidth/2 && pos.y == row * BHeight + BHeight/2)) {
       prevVel = vel;
       prevPos = pos;
       pos.add(vel);
       setPos(findRow(int(pos.y)), findCol(int(pos.x)));
    }
    else{
-     inSpawn = false; 
+     nextPos.x = pos.x;
+     nextPos.y = pos.y;
+     inSpawn = false;
+     
    }
   }
   
@@ -88,7 +93,7 @@ class Ghost {
     }
     if(pos.x < 0) {
       pos.x = width;
-      nextPos.y = width - BWidth;
+      nextPos.y = width - BWidth/2;
     }
     if (checkNextMove(vel)) {
       prevVel = vel;
@@ -136,6 +141,12 @@ class Ghost {
     boolean b = false;
     while(!b) {
       int n = int(random(4));
+      if(col == 0) {
+        return new PVector(-1,0); 
+      }
+      if(col == 27){
+        return new PVector(1,0); 
+      }
       if(n == 0){
         if(m.blocks[row-1][col].type != WALL && vel.y != 1 && m.blocks[row-1][col].type != SPAWN) {
           return new PVector(0,-1);
@@ -215,12 +226,11 @@ class Ghost {
   
   void eatenMove() {
     PVector[] validMoves = new PVector[3];
-    if(pos.dist(eatenTarget) < 1.0) {
+    if(pos.dist(eatenTarget) == 0) {
       inSpawn = true;
       eaten = false;
-      
     }
-    if (!inNext()) {
+    else if (!inNext()) {
       move();
     }
     else {
@@ -333,28 +343,28 @@ class Ghost {
       PVector oldVel = vel.copy();
       PVector testVel = new PVector(0,1);
       int checked = 0;
-      println(PVector.mult(oldVel,-1).y, testVel.y);
+      //println(PVector.mult(oldVel,-1).y, testVel.y);
       if (PVector.mult(oldVel, -1).y!=testVel.y && checkNextMove(testVel)) {
         validMoves[checked] = testVel.copy();
-        println(validMoves[checked]);
+        //println(validMoves[checked]);
         checked++;
       }
       testVel = new PVector(-1, 0);
       if (PVector.mult(oldVel, -1).x!=testVel.x && checkNextMove(testVel)) {
         validMoves[checked] = testVel.copy();
-        println(validMoves[checked]);
+        //println(validMoves[checked]);
         checked++;
       }
       testVel = new PVector(0, -1);
       if (PVector.mult(oldVel, -1).y!=testVel.y && checkNextMove(testVel)) {
         validMoves[checked] = testVel.copy();
-        println(validMoves[checked]);
+        //println(validMoves[checked]);
         checked++;
       }
       testVel = new PVector(1, 0);
       if (PVector.mult(oldVel, -1).x!=testVel.x && checkNextMove(testVel)) {
         validMoves[checked] = testVel.copy();
-        println(validMoves[checked]);
+        //println(validMoves[checked]);
         checked++;
       }
       float dist0 = bigNum, dist1 = bigNum, dist2 = bigNum;
