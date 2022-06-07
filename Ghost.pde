@@ -82,11 +82,11 @@ class Ghost {
   }
   
   void move() {
+    if(pos.x > width) pos.x = 0;
+    if(pos.x < 0) pos.x = width;
     if (checkNextMove(vel)) {
       prevVel = vel;
       prevPos = pos;
-      if(pos.x > width) pos.x = 0;
-      if(pos.x < 0) pos.x = width;
       pos.add(vel);
     }
     setPos(findRow(int(pos.y)), findCol(int(pos.x)));
@@ -95,6 +95,12 @@ class Ghost {
   
   void display() {
     fill(c);
+    if (blue) {
+      fill(50, 100, 255);
+    }
+    if (eaten) {
+      fill(255);
+    }
     circle(pos.x, pos.y, size);
   }
   
