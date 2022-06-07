@@ -11,8 +11,10 @@ class Pellet{
   }
   
   void display() {
-    if(inPacMan())
+    if(inPacMan() && !eaten){
       eaten = true;
+      eatenPellets++;
+    }
     if(!eaten){
       fill(255);
       stroke(255);

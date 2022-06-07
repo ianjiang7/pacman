@@ -82,13 +82,20 @@ class Ghost {
   }
   
   void move() {
-    if(pos.x > width) pos.x = 0;
-    if(pos.x < 0) pos.x = width;
+    if(pos.x > width) {
+      pos.x = 0;
+      nextPos.x = BWidth/2;
+    }
+    if(pos.x < 0) {
+      pos.x = width;
+      nextPos.y = width - BWidth;
+    }
     if (checkNextMove(vel)) {
       prevVel = vel;
       prevPos = pos;
       pos.add(vel);
     }
+    //println(chaseTarget);
     setPos(findRow(int(pos.y)), findCol(int(pos.x)));
   }
   
@@ -202,7 +209,7 @@ class Ghost {
   } //need for later (maybe?)
   
   boolean intersectWPac() {
-    println("  " + str(pos.dist(pac.pos) < BWidth));
+    //println("  " + str(pos.dist(pac.pos) < BWidth));
     return pos.dist(pac.pos) < BWidth;
   }
   
@@ -318,7 +325,7 @@ class Ghost {
   void chaseMove() {
     PVector[] validMoves = new PVector[3];
     setChaseTarget();
-    println(chaseTarget, pac.pos);
+    //println(chaseTarget, pac.pos);
     if(!inNext()) {
       move(); 
     }
@@ -326,23 +333,28 @@ class Ghost {
       PVector oldVel = vel.copy();
       PVector testVel = new PVector(0,1);
       int checked = 0;
+      println(PVector.mult(oldVel,-1).y, testVel.y);
       if (PVector.mult(oldVel, -1).y!=testVel.y && checkNextMove(testVel)) {
         validMoves[checked] = testVel.copy();
+        println(validMoves[checked]);
         checked++;
       }
       testVel = new PVector(-1, 0);
       if (PVector.mult(oldVel, -1).x!=testVel.x && checkNextMove(testVel)) {
         validMoves[checked] = testVel.copy();
+        println(validMoves[checked]);
         checked++;
       }
       testVel = new PVector(0, -1);
       if (PVector.mult(oldVel, -1).y!=testVel.y && checkNextMove(testVel)) {
         validMoves[checked] = testVel.copy();
+        println(validMoves[checked]);
         checked++;
       }
       testVel = new PVector(1, 0);
       if (PVector.mult(oldVel, -1).x!=testVel.x && checkNextMove(testVel)) {
         validMoves[checked] = testVel.copy();
+        println(validMoves[checked]);
         checked++;
       }
       float dist0 = bigNum, dist1 = bigNum, dist2 = bigNum;
@@ -355,6 +367,9 @@ class Ghost {
           }
         }
       }
+      //for (int i = 0; i < 3; i++) {
+      //  println(validMoves[i]);
+      //}
       int leastIndex = 0; //index with smallest distance
       float min = min(dist0, dist1, dist2);
       if (dist2 == min) leastIndex = 2;

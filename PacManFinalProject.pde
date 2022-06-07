@@ -27,6 +27,7 @@ int cols, rows;
 int BWidth, BHeight;
 String[] lines;
 
+int eatenPellets;
 
 
 Map m;
@@ -37,6 +38,8 @@ Ghost[] ghosts;
 void setup() {
   size(560,588);
   background(0);
+  
+  eatenPellets = 0;
   
   lines = loadStrings("map.txt");
   cols = lines[0].length();
@@ -86,15 +89,17 @@ void setup() {
 }
 
 void draw() {
+  if (eatenPellets == p.total) {
+    println("p");
+    println(eatenPellets);
+  }
+  else {
   m.display();
+
   p.display();
   pac.display();
   //pac.keyPressed();
   pac.move();
-  pinkG.display();
-  redG.display();
-  lightBlueG.display();
-  orangeG.display();
   
  
   for(int i = 0;i < 4;i++) {
@@ -116,12 +121,15 @@ void draw() {
         }
       }
       if(mode == SCATTER) {
-        ghosts[i].scatterMove(); 
+        ghosts[i].scatterMove();
+        
       }
       if (mode == CHASE) {
         ghosts[i].chaseMove();
       }
     }
+    ghosts[i].display();
+  }
   }
 }
 
