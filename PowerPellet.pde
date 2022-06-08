@@ -6,8 +6,11 @@ class PowerPellet extends Pellet{
    boolean inPacMan() {
      if( dist(pac.pos.x,pac.pos.y, x, y) < diameter/2.0 + BWidth/2) {
        mode = BLUE;
+       blueStartFrameCount = frameCount;
        for(int i = 0;i<ghosts.length;i++) {
-         ghosts[i].blue = true; 
+         if (!ghosts[i].eaten) {
+           ghosts[i].blue = true;
+         }
        }
        println(mode);
        return true;

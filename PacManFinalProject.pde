@@ -30,6 +30,7 @@ String[] lines;
 int eatenPellets;
 int pacLives;
 int score;
+int blueStartFrameCount;
 
 Map m;
 Pellets p;
@@ -86,7 +87,7 @@ void setup() {
   ghosts[1] = redG;
   ghosts[2] = orangeG;
   ghosts[3] = lightBlueG;
-  mode = CHASE;
+  mode = SCATTER;
   
   textAlign(LEFT,TOP);
 }
@@ -108,7 +109,7 @@ void draw() {
   for(int i = 0;i < 4;i++) {
     //println(ghosts[i].eaten,ghosts[i].blue,ghosts[i].inSpawn);
     if(ghosts[i].inSpawn) {
-      if(i == 3 && eatenPellets >= 30){
+      if(i == 3 && (eatenPellets >= 30 || frameCount > 240)){
         ghosts[i].spawnMove();
       }
       else if(i == 2 && eatenPellets > p.total/3) {
@@ -119,6 +120,13 @@ void draw() {
       }
     }
     else{
+      if (mode != BLUE && frameCount%200 == 0) mode = CHASE;
+      if (mode != BLUE && frameCount%600 ==0) mode = SCATTER;
+      println(mode);
+      if (frameCount - blueStartFrameCount == 480) {
+        mode = SCATTER;
+        ghosts[i].blue = false;
+      }
       if(mode == BLUE) {
         if (ghosts[i].blue) { //when ghost is blue
           ghosts[i].blueMove(); 
@@ -132,11 +140,12 @@ void draw() {
         }
       }
       if(mode == SCATTER) {
-        ghosts[i].scatterMove();
-        
+        if (ghosts[i].eaten) ghosts[i].eatenMove();
+        else ghosts[i].scatterMove();
       }
       if (mode == CHASE) {
-        ghosts[i].chaseMove();
+        if (ghosts[i].eaten) ghosts[i].eatenMove();
+        else ghosts[i].chaseMove();
       }
     }
     ghosts[i].display();
@@ -148,7 +157,10 @@ void draw() {
     }
   }
   }
-  text("SCORE: " + str(score),0,588,float(width),20.0);
+  fill(255);
+  textSize(13);
+  text("SCORE: " + str(score),10,588,float(width),20.0);
+  text("LIVES LEFT: " + str(pacLives), 100, 588, float(width), 20);
 }
 
 void keyPressed() {

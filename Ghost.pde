@@ -89,11 +89,11 @@ class Ghost {
   void move() {
     if(pos.x > width) {
       pos.x = 0;
-      nextPos.x = BWidth/2;
+      nextPos.x = BWidth + BWidth/2;
     }
     if(pos.x < 0) {
       pos.x = width;
-      nextPos.y = width - BWidth/2;
+      nextPos.x = width - BWidth + BWidth/2;
     }
     if (checkNextMove(vel)) {
       prevVel = vel;
@@ -109,6 +109,7 @@ class Ghost {
     fill(c);
     if (blue) {
       fill(50, 100, 255);
+      
     }
     if (eaten) {
       fill(255);
@@ -142,9 +143,11 @@ class Ghost {
     while(!b) {
       int n = int(random(4));
       if(col == 0) {
+        nextPos.x = width - BWidth/2;
         return new PVector(-1,0); 
       }
       if(col == 27){
+        nextPos.x = BWidth/2;
         return new PVector(1,0); 
       }
       if(n == 0){
@@ -207,17 +210,12 @@ class Ghost {
   void setEaten() { //eaten also needs to be set to false once it reaches eatenTarget, also once it reaches eatenTarget, inSpawn needs to be set to true
     if (blue) {
       if (intersectWPac()) { //might reset eaten to false if ghost stops intersecting with pac man like when pac moves away
+        score+= 200;
         eaten = true;
         blue = false;
       }
-      //else {
-      //  eaten = false;
-      //}
     }
-    //else {
-    //  eaten = false;
-    //}
-  } //need for later (maybe?)
+  } 
   
   boolean intersectWPac() {
     //println("  " + str(pos.dist(pac.pos) < BWidth));
