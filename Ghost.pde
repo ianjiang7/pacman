@@ -109,7 +109,9 @@ class Ghost {
     fill(c);
     if (blue) {
       if(frameCount % 2 == 0) {
-        image(s.get(8,4),pos.x - BWidth/2, pos.y - BWidth/2, BWidth, BHeight);
+        if(frameCount - blueStartFrameCount >= 360)
+          image(s.get(10,4),pos.x - BWidth/2, pos.y - BWidth/2, BWidth, BHeight);
+          else{image(s.get(8,4),pos.x - BWidth/2, pos.y - BWidth/2, BWidth, BHeight);}
       }
       else{
         image(s.get(9,4),pos.x - BWidth/2, pos.y - BWidth/2, BWidth, BHeight);
@@ -211,7 +213,7 @@ class Ghost {
       move(); 
     }
     else{
-      println("0:" + vel);
+      //println("0:" + vel);
       vel = getRandomVel();
       while(PVector.add(pos,vel) == prevPos) {
         vel = getRandomVel();
@@ -221,7 +223,7 @@ class Ghost {
       nextPos.x += vel.x * 2 * BWidth;
       nextPos.y += vel.y * 2 * BHeight;
       move();
-      println("1:" + vel);
+      //println("1:" + vel);
     }
     setEaten();
   }
@@ -314,11 +316,11 @@ class Ghost {
            pos.y += .5;
         }
         if(prevPos.x * 2 % 2 != 0) {
-          prevPos.x -= .5 * int(vel.y);
+          prevPos.x += .5 * int(vel.y);
         }   
         if(prevPos.y * 2 % 2 != 0) {
-          prevPos.y -= .5  * int(vel.y);
-        }        
+          prevPos.y += .5  * int(vel.y);
+        }
         println(nextPos);
       }
     }

@@ -3,69 +3,73 @@ class PacMan {
   //fill(200, 200, 0);
   //circle(14*BWidth +BWidth/2, 21*BHeight + BHeight/2, 10);
   
-  int size;
+  //int size;
   PVector pos;
   int row, col;
   int xVel, yVel;
   int nxV, nyV;
+  int pxV, pyV;
   //size just needs to be switched to width and height when we replace the circle with PImage
   
-  PacMan(int row, int col, int asize) {
+  PacMan(int row, int col) {
     pos = new PVector(col*BWidth + BWidth/2, row*BHeight + BHeight/2);
-    size = asize;
+    //size = asize;
     this.row = row;
     this.col = col;
     xVel = 0;
     yVel = 0;
     nxV = 0;
     nyV = 0;
+    pxV = 0;
+    pyV = 0;
   }
   
   void display() {
-    fill(255, 255, 0);
-    circle(pos.x, pos.y, size);
+    //fill(255, 255, 0);
+    //circle(pos.x, pos.y, size);
+    //println(xVel, yVel);
+    PImage img = s.get(2,0);
+    if(frameCount % 3 == 0) {
+      if(xVel == 1 && yVel == 0) img = s.get(1,0);
+      if(xVel == -1 && yVel == 0) img = s.get(1,1);
+      if(xVel == 0 && yVel == -1) img = s.get(1,2);
+      if(xVel == 0 && yVel == 1) img = s.get(1,3);
+    }
+    if(frameCount % 3 == 2){
+      if(xVel == 1 && yVel == 0) img = s.get(0,0);
+      if(xVel == -1 && yVel == 0) img = s.get(0,1);
+      if(xVel == 0 && yVel == -1) img = s.get(0,2);
+      if(xVel == 0 && yVel == 1) img = s.get(0,3);
+    }
+    if(xVel == 0 && yVel == 0) {
+        if(pxV == 1 && pyV == 0) img = s.get(1,0);
+        if(pxV == -1 && pyV == 0) img = s.get(1,1);
+        if(pxV == 0 && pyV == -1) img = s.get(1,2);
+        if(pxV == 0 && pyV == 1) img = s.get(1,3);
+      }
+    image(img,pos.x-BWidth/2,pos.y-BHeight/2,BWidth,BHeight);
   }
   
   void keyPressed() {
     if (keyCode == LEFT) {
-      //if(!inWall(x-(BWidth/2)-1,y)) {
-      //  xVel = -1;
-      //  yVel = 0;
-      //}
       nxV = -1;
     }
     if (keyCode == RIGHT) {
-      //if(!inWall(x+(BWidth/2)+1,y)) {
-      //  xVel = 1;
-      //  yVel = 0;
-      //  //move();
-      //}
       nxV = 1;
     }  
     if(keyCode == UP) {
-      //if(!inWall(x,y-(BHeight/2)-1)) {
-      //  yVel = -1;
-      //  xVel = 0;
-      //  //move();
-      //}
       nyV = -1;
     }
     if(keyCode == DOWN) {
-      //if(!inWall(x,y+(BHeight/2)+1)) {
-      //  yVel = 1;
-      //  xVel = 0;
-      //  //move();
-      //}
       nyV = 1;
     }
-    
-    //setPos(findRow(this.y), findCol(this.x));
-    //display();
   }
   
   void move() {
     if(nxV == 1){
       if(col == 27 || (!inWall(int(pos.x+nxV),int(pos.y), m.blocks[row][col+1]) && !inSpawn(int(pos.x+nxV),int(pos.y), m.blocks[row][col+1]) && pos.x == col*BWidth + (BWidth/2) && pos.y == row*BHeight + (BHeight/2) && m.blocks[row][col+1].type != WALL)) {
+        pxV = xVel;
+        pyV = yVel;
         xVel = 1;
         yVel = 0;
         nxV = 0;
@@ -74,6 +78,8 @@ class PacMan {
     
     if(nxV == -1){
       if(col == 0 || (!inWall(int(pos.x+nxV),int(pos.y), m.blocks[row][col-1]) && !inSpawn(int(pos.x+nxV),int(pos.y), m.blocks[row][col-1]) && pos.x == col*BWidth + (BWidth/2) && pos.y == row*BHeight + (BHeight/2) && m.blocks[row][col-1].type != WALL)) {
+        pxV = xVel;
+        pyV = yVel;
         xVel = -1;
         yVel = 0;
         nxV = 0;
@@ -82,10 +88,14 @@ class PacMan {
     
     if(nyV == 1){
       if (col ==  0 || col == 27) {
+        pxV = xVel;
+        pyV = yVel;
         yVel = 0;
         nyV = 0;
       }
       else if(!inWall(int(pos.x),int(pos.y+nyV), m.blocks[row+1][col]) && !inSpawn(int(pos.x),int(pos.y+nyV), m.blocks[row+1][col]) && pos.x == col*BWidth + (BWidth/2) && pos.y == row*BHeight + (BHeight/2) && m.blocks[row+1][col].type != WALL) {
+        pxV = xVel;
+        pyV = yVel;
         yVel = 1;
         xVel = 0;
         nyV = 0;
@@ -93,17 +103,22 @@ class PacMan {
     }
     if(nyV == -1){
       if (col ==  0 || col == 27) {
+        pxV = xVel;
+        pyV = yVel;
         yVel = 0;
         nyV = 0;
       }
       else if(!inWall(int(pos.x),int(pos.y+nyV), m.blocks[row-1][col]) && !inSpawn(int(pos.x),int(pos.y+nyV), m.blocks[row-1][col]) && pos.x == col*BWidth + (BWidth/2) && pos.y == row*BHeight + (BHeight/2) && m.blocks[row-1][col].type != WALL) {
+        pxV = xVel;
+        pyV = yVel;
         yVel = -1;
         xVel = 0;
         nyV = 0;
       }
     }
     if(inWall(int(pos.x+xVel),int(pos.y+yVel))) {
-      println("true");
+      pxV = xVel;
+      pyV = yVel;
       xVel = 0;
       yVel = 0;
     }

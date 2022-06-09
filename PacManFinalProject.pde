@@ -34,7 +34,8 @@ int eatenPellets;
 int pacLives;
 int score;
 int blueStartFrameCount;
-
+boolean dead;
+int deadTime;
 SpriteSheet s;
 Map m;
 Pellets p;
@@ -44,6 +45,7 @@ Ghost[] ghosts;
 void setup() {
   size(560,608);
   background(0);
+  dead = false;
   score = 0;
   eatenPellets = 0;
   pacLives = 3;
@@ -56,11 +58,11 @@ void setup() {
   PacSpawnCol = 14;
   PacSpawnRow = 21;
   
-  s = new SpriteSheet("sprites.png");
+  s = new SpriteSheet("sprite.png");
   m = new Map();
   m.ReadMap();
   m.display();
-  pac = new PacMan(PacSpawnRow, PacSpawnCol, BWidth);
+  pac = new PacMan(PacSpawnRow, PacSpawnCol);
   pac.display();
   p = new Pellets();
     p.ReadFile();
@@ -99,15 +101,34 @@ void setup() {
 
 void draw() {
   background(0);
+  if(dead) {
+    m.display();
+    p.display();
+    for(int i = 0; i < ghosts.length; i++) {ghosts[i].display();}
+    if(frameCount - deadTime == 110) {
+      dead = false;
+      if(pacLives != 0) {
+        pacLives--;
+        pac = new PacMan(PacSpawnRow, PacSpawnCol);
+      }
+    }
+    else{
+      PImage ani = s.get(3+((frameCount-deadTime)/10),0);
+      image(ani,pac.pos.x-BWidth/2,pac.pos.y-BHeight/2,BWidth,BHeight);
+    }
+   
+  }
+  else{
   if (eatenPellets == p.total || pacLives == 0) {
     println("GAME OVER");
+    textAlign(CENTER,CENTER);
+    text("GAME OVER!", width/2, height/2);
   }
   else {
   m.display();
 
   p.display();
   pac.display();
-  //pac.keyPressed();
   pac.move();
   
   //println(ghosts[3].nextPos.x,ghosts[3].nextPos.y, ghosts[3].pos, ghosts[3].vel);
@@ -136,6 +157,18 @@ void draw() {
       if (frameCount - blueStartFrameCount == 480) {
         mode = SCATTER;
         ghosts[i].blue = false;
+        if(ghosts[i].pos.x * 2 % 2 != 0) {
+          ghosts[i].pos.x += .5;
+        }
+        if(ghosts[i].pos.y * 2 % 2 != 0) {
+           ghosts[i].pos.y += .5;
+        }
+        if(ghosts[i].prevPos.x * 2 % 2 != 0) {
+          ghosts[i].prevPos.x += .5 * int(ghosts[i].vel.y);
+        }   
+        if(ghosts[i].prevPos.y * 2 % 2 != 0) {
+          ghosts[i].prevPos.y += .5  * int(ghosts[i].vel.y);
+        }
         
       }
       if(mode == BLUE) {
@@ -161,10 +194,9 @@ void draw() {
     }
     ghosts[i].display();
     if(ghosts[i].killPac()) {
-      if(pacLives != 0) {
-        pacLives--;
-        pac = new PacMan(PacSpawnRow, PacSpawnCol, BWidth);
-      }
+      dead = true;
+      deadTime = frameCount;
+      break;
     }
   }
   }
@@ -172,6 +204,8 @@ void draw() {
   textSize(13);
   text("SCORE: " + str(score),10,588,float(width),20.0);
   text("LIVES LEFT: " + str(pacLives), 100, 588, float(width), 20);
+  }
+
 }
 
 void keyPressed() {

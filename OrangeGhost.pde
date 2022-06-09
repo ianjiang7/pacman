@@ -28,7 +28,7 @@ class OrangeGhost extends Ghost {
   }
   
   void setChaseTarget() {
-    println("o");
+    //println("o");
     distToPac = PVector.dist(pac.pos, pos);
     if (distToPac >= 8*BWidth) {
       chaseTarget = pac.pos.copy();
