@@ -12,7 +12,7 @@ class Ghost {
   //PVector nextVel;
   //vel.x/nextVel.x and vel.y/nextVel.y can be -1, 0, or 1
   int row, col;
-  color c;
+  int c;
   int size;
   boolean inSpawn;
   boolean blue; //need a blue boolean because individual ghosts can be not blue if they respawn during blue mode
@@ -108,14 +108,103 @@ class Ghost {
   void display() {
     fill(c);
     if (blue) {
-      fill(50, 100, 255);
+      if(frameCount % 2 == 0) {
+        image(s.get(8,4),pos.x - BWidth/2, pos.y - BWidth/2, BWidth, BHeight);
+      }
+      else{
+        image(s.get(9,4),pos.x - BWidth/2, pos.y - BWidth/2, BWidth, BHeight);
+      }
+    }
+    else if (eaten) {
+      if(vel.x > 0) 
+        image(s.get(8,5),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight);
+      if(vel.x < 0)
+        image(s.get(9,5),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight);
+      if(vel.y < 0)
+        image(s.get(10,5),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight);
+      if(vel.y > 0)
+        image(s.get(11,5),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight);      
+    }
+    else{
+      if(c == R) {
+        if(vel.x > 0) {
+          if(frameCount % 2 == 0) {image(s.get(0,4),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight);}
+          else{ image(s.get(1,4),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight) ;}
+        }
+        if(vel.x < 0) {
+          if(frameCount % 2 == 0) {image(s.get(2,4),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight);}
+          else{ image(s.get(3,4),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight) ;}
+        }
+        if(vel.y < 0) {
+          if(frameCount % 2 == 0) {image(s.get(4,4),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight);}
+          else{ image(s.get(5,4),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight) ;}
+        }
+        if(vel.y > 0) {
+          if(frameCount % 2 == 0) {image(s.get(6,4),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight);}
+          else{ image(s.get(7,4),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight) ;}
+        }
+      }
       
+      if(c == P) {
+        if(vel.x > 0) {
+          if(frameCount % 2 == 0) {image(s.get(0,5),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight);}
+          else{ image(s.get(1,5),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight) ;}
+        }
+        if(vel.x < 0) {
+          if(frameCount % 2 == 0) {image(s.get(2,5),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight);}
+          else{ image(s.get(3,5),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight) ;}
+        }
+        if(vel.y < 0) {
+          if(frameCount % 2 == 0) {image(s.get(4,5),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight);}
+          else{ image(s.get(5,5),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight) ;}
+        }
+        if(vel.y > 0) {
+          if(frameCount % 2 == 0) {image(s.get(6,5),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight);}
+          else{ image(s.get(7,5),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight) ;}
+        }
+      }
+      
+      if(c == LB) {
+        if(vel.x > 0) {
+          if(frameCount % 2 == 0) {image(s.get(0,6),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight);}
+          else{ image(s.get(1,6),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight) ;}
+        }
+        if(vel.x < 0) {
+          if(frameCount % 2 == 0) {image(s.get(2,6),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight);}
+          else{ image(s.get(3,6),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight) ;}
+        }
+        if(vel.y < 0) {
+          if(frameCount % 2 == 0) {image(s.get(4,6),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight);}
+          else{ image(s.get(5,6),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight) ;}
+        }
+        if(vel.y > 0) {
+          if(frameCount % 2 == 0) {image(s.get(6,6),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight);}
+          else{ image(s.get(7,6),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight) ;}
+        }
+      }
+      
+      if(c == O) {
+        if(vel.x > 0) {
+          if(frameCount % 2 == 0) {image(s.get(0,7),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight);}
+          else{ image(s.get(1,7),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight) ;}
+        }
+        if(vel.x < 0) {
+          if(frameCount % 2 == 0) {image(s.get(2,7),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight);}
+          else{ image(s.get(3,7),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight) ;}
+        }
+        if(vel.y < 0) {
+          if(frameCount % 2 == 0) {image(s.get(4,7),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight);}
+          else{ image(s.get(5,7),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight) ;}
+        }
+        if(vel.y > 0) {
+          if(frameCount % 2 == 0) {image(s.get(6,7),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight);}
+          else{ image(s.get(7,7),pos.x - BWidth/2, pos.y - BHeight/2, BWidth, BHeight) ;}
+        }
+      }
     }
-    if (eaten) {
-      fill(255);
-    }
-    circle(pos.x, pos.y, size);
-  }
+    //circle(pos.x, pos.y, size);
+   }
+  
   
   void blueMove() {
     if(!inNext()) {
@@ -124,10 +213,13 @@ class Ghost {
     else{
       println("0:" + vel);
       vel = getRandomVel();
-      while(PVector.add(pos,vel) == prevPos)
+      while(PVector.add(pos,vel) == prevPos) {
         vel = getRandomVel();
-      nextPos.x += vel.x * BWidth;
-      nextPos.y += vel.y * BHeight;
+      }
+      vel.div(2);
+      //println(vel);
+      nextPos.x += vel.x * 2 * BWidth;
+      nextPos.y += vel.y * 2 * BHeight;
       move();
       println("1:" + vel);
     }
@@ -151,22 +243,22 @@ class Ghost {
         return new PVector(1,0); 
       }
       if(n == 0){
-        if(m.blocks[row-1][col].type != WALL && vel.y != 1 && m.blocks[row-1][col].type != SPAWN) {
+        if(m.blocks[row-1][col].type != WALL && vel.y != 0.5 && m.blocks[row-1][col].type != SPAWN) {
           return new PVector(0,-1);
         }
       }
       if(n == 1){
-        if(m.blocks[row+1][col].type != WALL && vel.y != -1 && m.blocks[row+1][col].type != SPAWN) {
+        if(m.blocks[row+1][col].type != WALL && vel.y != -0.5 && m.blocks[row+1][col].type != SPAWN) {
           return new PVector(0,1);
         }
       }
       if(n == 2){
-        if(m.blocks[row][col-1].type != WALL && vel.x != 1 && m.blocks[row][col-1].type != SPAWN) {
+        if(m.blocks[row][col-1].type != WALL && vel.x != 0.5 && m.blocks[row][col-1].type != SPAWN) {
           return new PVector(-1,0);
         }
       }
       if(n == 3){
-        if(m.blocks[row][col+1].type != WALL && vel.x != -1 && m.blocks[row][col+1].type != SPAWN) {
+        if(m.blocks[row][col+1].type != WALL && vel.x != -0.5 && m.blocks[row][col+1].type != SPAWN) {
           return new PVector(1,0);
         }
       }
@@ -213,6 +305,21 @@ class Ghost {
         score+= 200;
         eaten = true;
         blue = false;
+        vel.mult(2);
+        //pos = nextPos.copy();
+        if(pos.x * 2 % 2 != 0) {
+          pos.x += .5;
+        }
+        if(pos.y * 2 % 2 != 0) {
+           pos.y += .5;
+        }
+        if(prevPos.x * 2 % 2 != 0) {
+          prevPos.x -= .5 * int(vel.y);
+        }   
+        if(prevPos.y * 2 % 2 != 0) {
+          prevPos.y -= .5  * int(vel.y);
+        }        
+        println(nextPos);
       }
     }
   } 

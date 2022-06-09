@@ -14,7 +14,10 @@ int EATEN = 7;
 color blue = color(0,0,255);
 color black = color(0);
 color red = color(255,0,0);
-
+int R = 20;
+int P = 21;
+int O = 22;
+int LB = 23;
 int diameter = 5;
 
 int PacSpawnCol, PacSpawnRow;
@@ -32,6 +35,7 @@ int pacLives;
 int score;
 int blueStartFrameCount;
 
+SpriteSheet s;
 Map m;
 Pellets p;
 PacMan pac;
@@ -52,6 +56,7 @@ void setup() {
   PacSpawnCol = 14;
   PacSpawnRow = 21;
   
+  s = new SpriteSheet("sprites.png");
   m = new Map();
   m.ReadMap();
   m.display();
@@ -109,6 +114,11 @@ void draw() {
   for(int i = 0;i < 4;i++) {
     //println(ghosts[i].eaten,ghosts[i].blue,ghosts[i].inSpawn);
     if(ghosts[i].inSpawn) {
+      if (frameCount - blueStartFrameCount == 480) {
+        mode = SCATTER;
+        ghosts[i].blue = false;
+        
+      }
       if(i == 3 && (eatenPellets >= 30 || frameCount > 240)){
         ghosts[i].spawnMove();
       }
@@ -122,10 +132,11 @@ void draw() {
     else{
       if (mode != BLUE && frameCount%200 == 0) mode = CHASE;
       if (mode != BLUE && frameCount%600 ==0) mode = SCATTER;
-      println(mode);
+      //println(mode);
       if (frameCount - blueStartFrameCount == 480) {
         mode = SCATTER;
         ghosts[i].blue = false;
+        
       }
       if(mode == BLUE) {
         if (ghosts[i].blue) { //when ghost is blue
