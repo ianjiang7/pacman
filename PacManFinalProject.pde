@@ -33,6 +33,7 @@ String[] lines;
 int eatenPellets;
 int pacLives;
 int score;
+int highScore = 0;
 int blueStartFrameCount;
 boolean dead;
 int deadTime;
@@ -119,91 +120,102 @@ void draw() {
    
   }
   else{
-  if (eatenPellets == p.total || pacLives == 0) {
-    println("GAME OVER");
-    textAlign(CENTER,CENTER);
-    text("GAME OVER!", width/2, height/2);
-  }
-  else {
-  m.display();
-
-  p.display();
-  pac.display();
-  pac.move();
-  
-  //println(ghosts[3].nextPos.x,ghosts[3].nextPos.y, ghosts[3].pos, ghosts[3].vel);
-  for(int i = 0;i < 4;i++) {
-    //println(ghosts[i].eaten,ghosts[i].blue,ghosts[i].inSpawn);
-    if(ghosts[i].inSpawn) {
-      if (frameCount - blueStartFrameCount == 480) {
-        mode = SCATTER;
-        ghosts[i].blue = false;
-        
+    if (eatenPellets == p.total || pacLives == 0) {
+      if (score > highScore) {
+        highScore = score;
       }
-      if(i == 3 && (eatenPellets >= 30 || frameCount > 240)){
-        ghosts[i].spawnMove();
-      }
-      else if(i == 2 && eatenPellets > p.total/3) {
-        ghosts[i].spawnMove();
-      }
-      else if(i == 0 || i == 1) {
-        ghosts[i].spawnMove(); 
+      println("GAME OVER");
+      textAlign(CENTER,CENTER);
+      text("GAME OVER!", width/2, height/2);
+      text("Press \"n\" For New Game", width/2, height/2 + 50);
+      if (keyPressed) {
+        if(key == 'n' || key == 'N') {
+          setup();
+        }
       }
     }
-    else{
-      if (mode != BLUE && frameCount%200 == 0) mode = CHASE;
-      if (mode != BLUE && frameCount%600 ==0) mode = SCATTER;
-      //println(mode);
-      if (frameCount - blueStartFrameCount == 480) {
-        mode = SCATTER;
-        ghosts[i].blue = false;
-        if(ghosts[i].pos.x * 2 % 2 != 0) {
-          ghosts[i].pos.x += .5;
+    else {
+      m.display();
+    
+      p.display();
+      pac.display();
+      pac.move();
+      
+      //println(ghosts[3].nextPos.x,ghosts[3].nextPos.y, ghosts[3].pos, ghosts[3].vel);
+      for(int i = 0;i < 4;i++) {
+        //println(ghosts[i].eaten,ghosts[i].blue,ghosts[i].inSpawn);
+        if(ghosts[i].inSpawn) {
+          if (frameCount - blueStartFrameCount == 480) {
+            mode = SCATTER;
+            ghosts[i].blue = false;
+            
+          }
+          if(i == 3 && (eatenPellets >= 30 || frameCount > 240)){
+            ghosts[i].spawnMove();
+          }
+          else if(i == 2 && eatenPellets > p.total/3 || frameCount > 600) {
+            ghosts[i].spawnMove();
+          }
+          else if(i == 0 || i == 1) {
+            ghosts[i].spawnMove(); 
+          }
         }
-        if(ghosts[i].pos.y * 2 % 2 != 0) {
-           ghosts[i].pos.y += .5;
+        else{
+          if (mode != BLUE && frameCount%200 == 0) mode = CHASE;
+          if (mode != BLUE && frameCount%600 ==0) mode = SCATTER;
+          //println(mode);
+          if (frameCount - blueStartFrameCount == 480) {
+            mode = SCATTER;
+            ghosts[i].blue = false;
+            if(ghosts[i].pos.x * 2 % 2 != 0) {
+              ghosts[i].pos.x += .5;
+            }
+            if(ghosts[i].pos.y * 2 % 2 != 0) {
+               ghosts[i].pos.y += .5;
+            }
+            if(ghosts[i].prevPos.x * 2 % 2 != 0) {
+              ghosts[i].prevPos.x += .5 * int(ghosts[i].vel.y);
+            }   
+            if(ghosts[i].prevPos.y * 2 % 2 != 0) {
+              ghosts[i].prevPos.y += .5  * int(ghosts[i].vel.y);
+            }
+            
+          }
+          if(mode == BLUE) {
+            if (ghosts[i].blue) { //when ghost is blue
+              ghosts[i].blueMove(); 
+              //println(ghosts[i].eaten);
+            }
+            else if (ghosts[i].eaten) { //when ghost has been eaten
+              ghosts[i].eatenMove();
+            }
+            else { //when ghost has been respawned after being eaten
+              ghosts[i].scatterMove();
+            }
+          }
+          if(mode == SCATTER) {
+            if (ghosts[i].eaten) ghosts[i].eatenMove();
+            else ghosts[i].scatterMove();
+          }
+          if (mode == CHASE) {
+            if (ghosts[i].eaten) ghosts[i].eatenMove();
+            else ghosts[i].chaseMove();
+          }
         }
-        if(ghosts[i].prevPos.x * 2 % 2 != 0) {
-          ghosts[i].prevPos.x += .5 * int(ghosts[i].vel.y);
-        }   
-        if(ghosts[i].prevPos.y * 2 % 2 != 0) {
-          ghosts[i].prevPos.y += .5  * int(ghosts[i].vel.y);
+        ghosts[i].display();
+        if(ghosts[i].killPac()) {
+          dead = true;
+          deadTime = frameCount;
+          break;
         }
-        
-      }
-      if(mode == BLUE) {
-        if (ghosts[i].blue) { //when ghost is blue
-          ghosts[i].blueMove(); 
-          //println(ghosts[i].eaten);
-        }
-        else if (ghosts[i].eaten) { //when ghost has been eaten
-          ghosts[i].eatenMove();
-        }
-        else { //when ghost has been respawned after being eaten
-          ghosts[i].scatterMove();
-        }
-      }
-      if(mode == SCATTER) {
-        if (ghosts[i].eaten) ghosts[i].eatenMove();
-        else ghosts[i].scatterMove();
-      }
-      if (mode == CHASE) {
-        if (ghosts[i].eaten) ghosts[i].eatenMove();
-        else ghosts[i].chaseMove();
       }
     }
-    ghosts[i].display();
-    if(ghosts[i].killPac()) {
-      dead = true;
-      deadTime = frameCount;
-      break;
-    }
-  }
-  }
   fill(255);
   textSize(13);
+  textAlign(LEFT, TOP);
   text("SCORE: " + str(score),10,588,float(width),20.0);
-  text("LIVES LEFT: " + str(pacLives), 100, 588, float(width), 20);
+  text("HIGH SCORE: " + str(highScore), 90, 588, float(width), 20.);
+  text("LIVES LEFT: " + str(pacLives), 200, 588, float(width), 20.);
   }
 
 }
