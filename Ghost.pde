@@ -102,6 +102,7 @@ class Ghost {
     }
     //println(chaseTarget);
     setPos(findRow(int(pos.y)), findCol(int(pos.x)));
+    if(!blue && !eaten) {if(frameCount % 95 == 0) {ghostM.play();}}
   }
   
   
@@ -304,24 +305,24 @@ class Ghost {
   void setEaten() { //eaten also needs to be set to false once it reaches eatenTarget, also once it reaches eatenTarget, inSpawn needs to be set to true
     if (blue) {
       if (intersectWPac()) { //might reset eaten to false if ghost stops intersecting with pac man like when pac moves away
+        eatGhost.play();
         score+= 200;
         eaten = true;
         blue = false;
         vel.mult(2);
         //pos = nextPos.copy();
         if(pos.x * 2 % 2 != 0) {
-          pos.x += .5;
+          pos.x += .5* int(vel.x);
         }
         if(pos.y * 2 % 2 != 0) {
-           pos.y += .5;
+           pos.y += .5 * int(vel.y);
         }
         if(prevPos.x * 2 % 2 != 0) {
-          prevPos.x += .5 * int(vel.y);
+          prevPos.x -= .5 * int(vel.x);
         }   
         if(prevPos.y * 2 % 2 != 0) {
-          prevPos.y += .5  * int(vel.y);
+          prevPos.y -= .5  * int(vel.y);
         }
-        println(nextPos);
       }
     }
   } 

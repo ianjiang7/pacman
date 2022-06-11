@@ -15,6 +15,7 @@ class Pellet{
       eaten = true;
       eatenPellets++;
       score += 100;
+      eatP.play();
     }
     if(!eaten){
       fill(255);

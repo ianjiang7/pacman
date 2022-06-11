@@ -1,3 +1,5 @@
+import processing.sound.*;
+
 //describes blocks
 int EMPTY = 0;
 int WALL = 1;
@@ -36,6 +38,7 @@ int score;
 int highScore = 0;
 int blueStartFrameCount;
 boolean dead;
+boolean started = false;
 int deadTime;
 SpriteSheet s;
 Map m;
@@ -43,8 +46,25 @@ Pellets p;
 PacMan pac;
 Ghost pinkG, orangeG, redG, lightBlueG;
 Ghost[] ghosts;
+
+//sound
+SoundFile eatP;
+SoundFile eatPow;
+SoundFile start;
+SoundFile bGhost;
+SoundFile death;
+SoundFile ghostM;
+SoundFile eatGhost;
 void setup() {
+  frameCount = 0;
   size(560,608);
+  eatP = new SoundFile(this, "munch_1.wav");
+  eatPow = new SoundFile(this, "power_pellet.wav");
+  start = new SoundFile(this, "game_start.wav");
+  bGhost = new SoundFile(this, "retreating.wav");
+  death = new SoundFile(this, "death_1.wav");
+  ghostM = new SoundFile(this, "siren_1.wav");
+  eatGhost = new SoundFile(this, "eat_ghost.wav");
   background(0);
   dead = false;
   score = 0;
@@ -62,13 +82,13 @@ void setup() {
   s = new SpriteSheet("sprite.png");
   m = new Map();
   m.ReadMap();
-  m.display();
+  //m.display();
   pac = new PacMan(PacSpawnRow, PacSpawnCol);
-  pac.display();
+  //pac.display();
   p = new Pellets();
     p.ReadFile();
 
-  p.display();
+  //p.display();
   
  
   
@@ -82,14 +102,10 @@ void setup() {
   blueSpawnRow = 13;
   
   pinkG = new PinkGhost(pinkSpawnRow, pinkSpawnCol, BWidth);
-  pinkG.display();
   redG = new RedGhost(redSpawnRow, redSpawnCol, BWidth);
-
-  redG.display();
   lightBlueG = new LightBlueGhost(blueSpawnRow, blueSpawnCol, BWidth);
-  lightBlueG.display();
   orangeG = new OrangeGhost(orangeSpawnRow, orangeSpawnCol, BWidth);
-  orangeG.display();
+
   ghosts = new Ghost[4];
   ghosts[0] = pinkG;
   ghosts[1] = redG;
@@ -102,7 +118,18 @@ void setup() {
 
 void draw() {
   background(0);
+
+  if(started && frameCount == 2) {
+    m.display();
+    p.display();
+    for(int i = 0; i < 4; i++){ ghosts[i].display();}
+    pac.display();
+    start.play();
+    int n = millis();
+    while(millis() - n < 4000) {}
+  }
   if(dead) {
+    if(deadTime + 1 == frameCount) death.play();
     m.display();
     p.display();
     for(int i = 0; i < ghosts.length; i++) {ghosts[i].display();}
@@ -111,6 +138,15 @@ void draw() {
       if(pacLives != 0) {
         pacLives--;
         pac = new PacMan(PacSpawnRow, PacSpawnCol);
+        pinkG = new PinkGhost(pinkSpawnRow, pinkSpawnCol, BWidth);
+        redG = new RedGhost(redSpawnRow, redSpawnCol, BWidth);
+        lightBlueG = new LightBlueGhost(blueSpawnRow, blueSpawnCol, BWidth);
+        orangeG = new OrangeGhost(orangeSpawnRow, orangeSpawnCol, BWidth);
+        ghosts = new Ghost[4];
+        ghosts[0] = pinkG;
+        ghosts[1] = redG;
+        ghosts[2] = orangeG;
+        ghosts[3] = lightBlueG;
       }
     }
     else{
@@ -119,8 +155,19 @@ void draw() {
     }
    
   }
+  else if(!started) {
+    textAlign(CENTER,CENTER);
+    text("Press SPACE to Start Game", width/2, height/2);
+    if (keyPressed) {
+      if(key == ' ') {
+        started = true;
+        setup();
+      }
+    }
+  }
   else{
     if (eatenPellets == p.total || pacLives == 0) {
+      started = false;
       if (score > highScore) {
         highScore = score;
       }
@@ -130,13 +177,13 @@ void draw() {
       text("Press \"n\" For New Game", width/2, height/2 + 50);
       if (keyPressed) {
         if(key == 'n' || key == 'N') {
+          started = true;
           setup();
         }
       }
     }
     else {
       m.display();
-    
       p.display();
       pac.display();
       pac.move();
@@ -179,14 +226,15 @@ void draw() {
             if(ghosts[i].prevPos.y * 2 % 2 != 0) {
               ghosts[i].prevPos.y += .5  * int(ghosts[i].vel.y);
             }
-            
           }
           if(mode == BLUE) {
+            if((blueStartFrameCount - frameCount) % 120 == 0){ bGhost.amp(.5); bGhost.play();}
             if (ghosts[i].blue) { //when ghost is blue
               ghosts[i].blueMove(); 
               //println(ghosts[i].eaten);
             }
             else if (ghosts[i].eaten) { //when ghost has been eaten
+              ghosts[i].eatenMove();
               ghosts[i].eatenMove();
             }
             else { //when ghost has been respawned after being eaten
@@ -201,6 +249,7 @@ void draw() {
             if (ghosts[i].eaten) ghosts[i].eatenMove();
             else ghosts[i].chaseMove();
           }
+         
         }
         ghosts[i].display();
         if(ghosts[i].killPac()) {
@@ -221,5 +270,7 @@ void draw() {
 }
 
 void keyPressed() {
-  pac.keyPressed(); 
+
+  if(started)
+    pac.keyPressed(); 
 }
