@@ -387,7 +387,7 @@ class Ghost {
   }
   
   void scatterMove() {
-    PVector[] validMoves = new PVector[3];
+    PVector[] validMoves = new PVector[4];
     if(!inNext()) {
       move(); 
     }

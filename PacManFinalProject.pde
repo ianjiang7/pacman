@@ -136,6 +136,7 @@ void draw() {
     if(frameCount - deadTime == 110) {
       dead = false;
       if(pacLives != 0) {
+        frameCount = 0;
         pacLives--;
         pac = new PacMan(PacSpawnRow, PacSpawnCol);
         pinkG = new PinkGhost(pinkSpawnRow, pinkSpawnCol, BWidth);
@@ -171,7 +172,12 @@ void draw() {
       if (score > highScore) {
         highScore = score;
       }
-      println("GAME OVER");
+      if (pacLives == 0) {
+        println("GAME OVER");
+      }
+      if (eatenPellets == p.total) {
+        println("CONGRATS!");
+      }
       textAlign(CENTER,CENTER);
       text("GAME OVER!", width/2, height/2);
       text("Press \"n\" For New Game", width/2, height/2 + 50);
